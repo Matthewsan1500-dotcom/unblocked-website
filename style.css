@@ -16,3 +16,5 @@ h1{font-family:'Bebas Neue',var(--sans);font-size:clamp(72px,9vw,122px);line-hei
 .hero{grid-template-columns:1fr}.hero-art{width:100%;max-width:900px;margin:0 auto}
 .development-note{font:8px var(--mono);letter-spacing:.22em;color:#988b91;text-align:center;margin-top:-7px}
 .chrome-emblem>.social-links{margin-top:3px;justify-content:center;gap:6px;flex-wrap:wrap}.chrome-emblem>.social-links a{min-height:36px;padding:0 10px;font-size:7px}.chrome-emblem>.social-links a span{font-size:10px}
+
+.hero-art{grid-column:1/-1}
