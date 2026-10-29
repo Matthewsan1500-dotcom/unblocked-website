@@ -1,22 +1,14 @@
-# AfterBell Arcade
+# Afterdark Arcade
 
-Arcade estático con seis minijuegos propios para navegador, listo para GitHub Pages.
+Arcade oscuro con seis minijuegos propios, Thief Puzzle de Famobi y un enlace a 1v1.LOL en CrazyGames.
 
-## Juegos
+## Incluye
 
-- Neon Drift
-- Tiny Tiles
-- Orbit Bounce
-- Pixel Sprint
-- Color Drop
-- Lucky Bounce
+- Seis minijuegos HTML, CSS y JavaScript con controles y puntuaciones mejorados
+- Thief Puzzle integrado desde Famobi
+- 1v1.LOL enlazado a su página de juego en CrazyGames
+- Búsqueda, filtros, diseño adaptable y estrellas animadas
 
 ## Publicación
 
-El workflow de GitHub Actions en `.github/workflows/pages.yml` despliega automáticamente a GitHub Pages en cada push a `main`. Para la primera publicación, selecciona **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-
-## Características
-
-- Búsqueda y filtros por categoría
-- Diseño adaptable a móvil y escritorio
-- Sin descargas ni proceso de build
+GitHub Actions publica el sitio en GitHub Pages cada vez que se actualiza `main`.
