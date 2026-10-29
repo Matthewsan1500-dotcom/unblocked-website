@@ -1,13 +1,22 @@
 # AfterBell Arcade
 
-Sitio estático de juegos de navegador, listo para GitHub Pages.
+Arcade estático con seis minijuegos propios para navegador, listo para GitHub Pages.
 
-## Publicar
+## Juegos
 
-El workflow de GitHub Actions en `.github/workflows/pages.yml` publica el sitio al hacer push a `main`. En GitHub, configura **Settings → Pages → Build and deployment → Source: GitHub Actions** si todavía no está seleccionado.
+- Neon Drift
+- Tiny Tiles
+- Orbit Bounce
+- Pixel Sprint
+- Color Drop
+- Lucky Bounce
 
-## Contenido
+## Publicación
 
-- Seis minijuegos HTML, CSS y JavaScript
-- Búsqueda, filtros y diseño adaptable
-- No requiere instalación ni proceso de build
+El workflow de GitHub Actions en `.github/workflows/pages.yml` despliega automáticamente a GitHub Pages en cada push a `main`. Para la primera publicación, selecciona **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+## Características
+
+- Búsqueda y filtros por categoría
+- Diseño adaptable a móvil y escritorio
+- Sin descargas ni proceso de build
