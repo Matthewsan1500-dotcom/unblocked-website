@@ -29,3 +29,5 @@ h1{font-family:'Bebas Neue',var(--sans);font-size:clamp(72px,9vw,122px);line-hei
 .orbit-one{border-color:rgba(207,211,216,.22)}
 @media(max-width:760px){.hero{min-height:490px;padding:51px 7% 43px}.hero-art{inset:0;height:100%;max-width:none}.chrome-word{font-size:clamp(42px,10vw,64px)}}
 
+.about-copy{max-width:760px}.about .about-tag{font:8px var(--mono);letter-spacing:.17em;color:#c0b7bc;margin:0 0 9px}.about .about-description{font:10px/1.8 var(--mono);letter-spacing:.055em;color:#a99da2;margin:0}@media(max-width:760px){.about{align-items:flex-start}.about-copy{flex:1}.about .about-description{font-size:9px;line-height:1.7}}
+
