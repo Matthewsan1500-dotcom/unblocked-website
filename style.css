@@ -18,3 +18,4 @@ h1{font-family:'Bebas Neue',var(--sans);font-size:clamp(72px,9vw,122px);line-hei
 .chrome-emblem>.social-links{margin-top:3px;justify-content:center;gap:6px;flex-wrap:wrap}.chrome-emblem>.social-links a{min-height:36px;padding:0 10px;font-size:7px}.chrome-emblem>.social-links a span{font-size:10px}
 
 .hero-art{grid-column:1/-1}
+.hero-art{grid-column:1/-1;min-height:450px;max-width:900px;width:100%;margin:0 auto}.chrome-emblem{gap:16px;transform:none;isolation:isolate}.chrome-emblem:before{content:"";position:absolute;inset:-95px -125px;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at center,rgba(149,56,78,.34),rgba(80,34,47,.13) 42%,transparent 72%);filter:blur(20px)}.chrome-word{font-size:clamp(52px,10vw,100px);letter-spacing:.1em;transform:rotate(-3deg);filter:drop-shadow(0 9px 22px #000) drop-shadow(0 0 22px #ba718236)}.chrome-emblem>.social-links{margin-top:5px}.chrome-emblem>.social-links a{min-height:40px;padding:0 12px;font-size:8px}
