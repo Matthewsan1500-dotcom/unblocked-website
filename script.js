@@ -5,6 +5,8 @@ const modal = document.querySelector('#game-modal');
 const stage = document.querySelector('#game-stage');
 const title = document.querySelector('#modal-title');
 const help = document.querySelector('#modal-help');
+const browserUrl = document.querySelector('#browser-url');
+let activeGameUrl = '';
 let category = 'all';
 
 const starfield = document.querySelector('.starfield');
@@ -44,6 +46,27 @@ document.addEventListener('keydown', event => {
     event.preventDefault();
     search.focus();
   }
+});
+
+function openGameInsidePage(link) {
+  const gameName = link.getAttribute('aria-label')?.replace(/^Play\s+/i, '') || link.closest('.game-card')?.querySelector('h3')?.textContent || 'Game';
+  activeGameUrl = link.href;
+  const gameUrl = new URL(activeGameUrl);
+  title.textContent = gameName.toUpperCase();
+  browserUrl.textContent = gameUrl.hostname + gameUrl.pathname;
+  help.textContent = 'The game host may block in-page playback. If the frame stays blank, this page does not allow embedding.';
+  stage.innerHTML = `<iframe class="browser-frame" src="${activeGameUrl}" title="${gameName}" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock" allow="autoplay; fullscreen; gamepad" allowfullscreen loading="eager"></iframe>`;
+  if (!modal.open) modal.showModal();
+}
+
+document.querySelectorAll('.game-card .card-art').forEach(link => link.addEventListener('click', event => {
+  event.preventDefault();
+  openGameInsidePage(link);
+}));
+
+document.querySelector('#reload-game').addEventListener('click', () => {
+  const frame = stage.querySelector('iframe');
+  if (frame) frame.src = activeGameUrl;
 });
 
 document.querySelector('#close-modal').addEventListener('click', () => modal.close());
