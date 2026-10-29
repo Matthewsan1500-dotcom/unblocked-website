@@ -1,14 +1,21 @@
-# Afterdark Arcade
+# Chrome
 
-Arcade oscuro con seis minijuegos propios, Thief Puzzle de Famobi y un enlace a 1v1.LOL en CrazyGames.
+A dark browser game website with eight playable or linked games.
 
-## Incluye
+## Games
 
-- Seis minijuegos HTML, CSS y JavaScript con controles y puntuaciones mejorados
-- Thief Puzzle integrado desde Famobi
-- 1v1.LOL enlazado a su página de juego en CrazyGames
-- Búsqueda, filtros, diseño adaptable y estrellas animadas
+- Neon Drift
+- Tiny Tiles
+- Orbit Bounce
+- Pixel Sprint
+- Color Drop
+- Lucky Bounce
+- Thief Puzzle, hosted by Famobi
+- 1v1.LOL, linked to CrazyGames
 
-## Publicación
+## Features
 
-GitHub Actions publica el sitio en GitHub Pages cada vez que se actualiza `main`.
+- English interface and game controls
+- Responsive layout with falling stars and a custom silver CHROME wordmark
+- TikTok, Kick, and YouTube links in the footer
+- GitHub Actions deploys the site to GitHub Pages
