@@ -46,12 +46,14 @@ document.addEventListener('keydown', event => {
   }
 });
 
-document.querySelector('[data-play="famobi"]').addEventListener('click', () => {
-  title.textContent = 'THIEF PUZZLE';
+document.querySelectorAll('[data-play]').forEach(button => button.addEventListener('click', () => {
+  const gameName = button.dataset.gameTitle;
+  const gameUrl = button.dataset.gameUrl;
+  title.textContent = gameName.toUpperCase();
   help.textContent = 'Hosted by Famobi. If it does not load, open it in a new tab.';
-  stage.innerHTML = '<div class="famobi-wrap"><iframe class="famobi-frame" src="https://play.famobi.com/thief-puzzle" title="Thief Puzzle" allow="autoplay; fullscreen; gamepad" allowfullscreen loading="eager"></iframe><div class="famobi-fallback">Not loading? <a href="https://play.famobi.com/thief-puzzle" target="_blank" rel="noopener noreferrer">Open Thief Puzzle ↗</a></div></div>';
+  stage.innerHTML = `<div class="famobi-wrap"><iframe class="famobi-frame" src="${gameUrl}" title="${gameName}" allow="autoplay; fullscreen; gamepad" allowfullscreen loading="eager"></iframe><div class="famobi-fallback">Not loading? <a href="${gameUrl}" target="_blank" rel="noopener noreferrer">Open ${gameName} ↗</a></div></div>`;
   modal.showModal();
-});
+}));
 
 document.querySelector('#close-modal').addEventListener('click', () => modal.close());
 modal.addEventListener('close', () => stage.replaceChildren());
