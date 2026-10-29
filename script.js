@@ -30,7 +30,7 @@ function refreshCards() {
     if (visible) count++;
   });
   document.querySelector('#empty').style.display = count ? 'none' : 'block';
-  document.querySelector('.results').textContent = `${String(count).padStart(2, '0')} GAMES AVAILABLE`;
+  document.querySelector('.results').textContent = `${String(count).padStart(2, '0')} ${count === 1 ? 'GAME' : 'GAMES'} AVAILABLE`;
 }
 
 filters.forEach(button => button.addEventListener('click', () => {
