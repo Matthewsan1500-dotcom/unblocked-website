@@ -1,51 +1,51 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#100b0e">
-  <meta name="description" content="Juegos de navegador para jugar after hours.">
-  <title>Afterdark Arcade</title>
+  <meta name="description" content="Browser games for after hours.">
+  <title>Chrome</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Righteous&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="starfield" aria-hidden="true"></div>
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="Afterdark inicio"><span class="brand-mark">✳</span><span>AFTERDARK</span></a>
-    <nav aria-label="Navegación principal"><a class="active" href="#games">JUEGOS</a><a href="#about">INFO</a></nav>
-    <div class="online"><i></i> AFTER HOURS ONLY</div>
+    <a class="brand" href="#top" aria-label="Chrome home"><span class="brand-mark chrome-mark">C</span><span>CHROME</span></a>
+    <nav aria-label="Main navigation"><a class="active" href="#games">GAMES</a><a href="#about">ABOUT</a></nav>
+    <div class="top-actions"><a class="corner-games" href="#games">GAMES <span>↘</span></a></div>
   </header>
 
   <main id="top">
     <section class="hero">
-      <div class="hero-copy"><p class="eyebrow"><span>01</span> PLAY IT AFTER DARK</p><h1>NO RULES.<br>JUST <em>RE</em><br>PLAY.</h1><p class="intro">Juegos rápidos para cuando se apagan las luces.<br>Entra, juega, vuelve por otra.</p><a class="primary" href="#games">ENTRA AL ARCADE <span>↘</span></a></div>
-      <div class="hero-art" aria-label="Ilustración de una máquina arcade nocturna"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="spark s1">✳</div><div class="spark s2">✳</div><div class="arcade"><div class="cabinet-top"><span>AFTER<br>DARK</span><b>✟</b></div><div class="screen"><div class="pixel-sun"></div><div class="pixel-hill"></div><div class="pixel-hill hill-two"></div><div class="screen-text">PRESS START</div></div><div class="controls"><span class="stick"></span><i></i><i></i></div><div class="cabinet-base"></div></div><div class="hero-tag">NO SLEEP<br>JUST SCORE <b>↗</b></div><span class="art-index">FIG. 001 — MIDNIGHT ARCADE</span></div>
+      <div class="hero-copy"><p class="eyebrow"><span>01</span> PLAY IT AFTER DARK</p><h1>NO RULES.<br>JUST <em>RE</em><br>PLAY.</h1><p class="intro">Quick games for when the lights go out.<br>Jump in, play, come back for one more.</p></div>
+      <div class="hero-art" aria-label="Chrome wordmark"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="spark s1">✳</div><div class="spark s2">✳</div><div class="chrome-emblem"><span class="chrome-c">C</span><span class="chrome-word">CHROME</span></div><div class="hero-tag">NO SLEEP<br>JUST SCORE <b>↗</b></div><span class="art-index">FIG. 001 — CHROME</span></div>
       <div class="side-note">DARK MODE<br>PERMANENT <span>✳</span></div>
     </section>
 
     <section class="games-section" id="games">
-      <div class="section-head"><div><p class="eyebrow"><span>02</span> THE MIDNIGHT ROTATION</p><h2>CHOOSE YOUR <em>POISON</em></h2></div><label class="search"><span>⌕</span><input id="search" type="search" placeholder="BUSCAR JUEGO" aria-label="Buscar juego"><kbd>/</kbd></label></div>
-      <div class="filters" role="group" aria-label="Filtrar por categoría"><button class="filter selected" data-filter="all">TODO <small>08</small></button><button class="filter" data-filter="arcade">ARCADE</button><button class="filter" data-filter="puzzle">PUZZLE</button><button class="filter" data-filter="casual">CASUAL</button><span class="results">08 JUEGOS DISPONIBLES</span></div>
+      <div class="section-head"><div><p class="eyebrow"><span>02</span> THE MIDNIGHT ROTATION</p><h2>CHOOSE YOUR <em>POISON</em></h2></div><label class="search"><span>⌕</span><input id="search" type="search" placeholder="SEARCH GAMES" aria-label="Search games"><kbd>/</kbd></label></div>
+      <div class="filters" role="group" aria-label="Filter by category"><button class="filter selected" data-filter="all">ALL <small>08</small></button><button class="filter" data-filter="action">ACTION</button><button class="filter" data-filter="puzzle">PUZZLE</button><button class="filter" data-filter="casual">CASUAL</button><span class="results">08 GAMES AVAILABLE</span></div>
       <div class="grid" id="game-grid">
-        <article class="game-card featured" data-category="arcade" data-name="neon drift"><button class="card-art art-drift" data-play="drift" aria-label="Jugar Neon Drift"><span class="art-label">01 / ARCADE</span><div class="road"><i></i><i></i><i></i></div><div class="car">▰</div><span class="art-title">NEON<br>DRIFT</span><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Neon Drift</h3><p>Esquiva. Sobrevive. Repite.</p></div><span class="play-icon">▶</span></div></article>
-        <article class="game-card" data-category="puzzle" data-name="tiny tiles"><button class="card-art art-tiles" data-play="tiles" aria-label="Jugar Tiny Tiles"><span class="art-label">02 / PUZZLE</span><div class="tile-board"><i>2</i><i>4</i><i>·</i><i>8</i><i>·</i><i>2</i><i>·</i><i>·</i><i>4</i></div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Tiny Tiles</h3><p>Une los números iguales.</p></div><span class="play-icon">▶</span></div></article>
-        <article class="game-card" data-category="casual" data-name="orbit bounce"><button class="card-art art-orbit" data-play="orbit" aria-label="Jugar Orbit Bounce"><span class="art-label">03 / CASUAL</span><div class="planet"><i></i></div><div class="orbiter">✦</div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Orbit Bounce</h3><p>Un salto más y ya.</p></div><span class="play-icon">▶</span></div></article>
-        <article class="game-card" data-category="arcade" data-name="pixel sprint"><button class="card-art art-sprint" data-play="sprint" aria-label="Jugar Pixel Sprint"><span class="art-label">04 / ARCADE</span><div class="sunset"></div><div class="runner">♟</div><div class="ground"></div><span class="art-title">RUN<br>IT BACK</span><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Pixel Sprint</h3><p>Corre contra el reloj.</p></div><span class="play-icon">▶</span></div></article>
-        <article class="game-card" data-category="puzzle" data-name="color drop"><button class="card-art art-drop" data-play="drop" aria-label="Jugar Color Drop"><span class="art-label">05 / PUZZLE</span><div class="drop-shape">●</div><div class="drop-trail"></div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Color Drop</h3><p>Atina el color correcto.</p></div><span class="play-icon">▶</span></div></article>
-        <article class="game-card" data-category="casual" data-name="lucky bounce"><button class="card-art art-lucky" data-play="lucky" aria-label="Jugar Lucky Bounce"><span class="art-label">06 / CASUAL</span><div class="lucky-ball">✳</div><div class="lucky-stars">· &nbsp; ✦ &nbsp; ·</div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Lucky Bounce</h3><p>Rebota hasta la cima.</p></div><span class="play-icon">▶</span></div></article>
-        <article class="game-card" data-category="puzzle" data-name="thief puzzle"><button class="card-art art-thief" data-play="famobi" aria-label="Jugar Thief Puzzle"><span class="art-label">07 / PUZZLE · WEB</span><div class="thief-silhouette">♟</div><span class="thief-stamp">STEAL<br>THE WIN</span><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Thief Puzzle</h3><p>Roba el objetivo sin que te atrapen.</p></div><span class="play-icon">↗</span></div></article>
-        <article class="game-card" data-category="arcade" data-name="1v1 lol battle royale shooter"><a class="card-art art-1v1" href="https://www.crazygames.com/game/1v1-lol" target="_blank" rel="noopener noreferrer" aria-label="Jugar 1v1 LOL en CrazyGames"><span class="art-label">08 / MULTIPLAYER · WEB</span><span class="arena-mark"></span><span class="arena-text">1V1.LOL</span><span class="art-arrow">↗</span></a><div class="card-meta"><div><h3>1v1.LOL</h3><p>Duelo, construcción y combate.</p></div><span class="play-icon">↗</span></div></article>
+        <article class="game-card featured" data-category="action" data-name="neon drift"><button class="card-art art-drift" data-play="drift" aria-label="Play Neon Drift"><span class="art-label">01 / ACTION</span><div class="road"><i></i><i></i><i></i></div><div class="car">▰</div><span class="art-title">NEON<br>DRIFT</span><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Neon Drift</h3><p>Dodge. Survive. Repeat.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="puzzle" data-name="tiny tiles"><button class="card-art art-tiles" data-play="tiles" aria-label="Play Tiny Tiles"><span class="art-label">02 / PUZZLE</span><div class="tile-board"><i>2</i><i>4</i><i>·</i><i>8</i><i>·</i><i>2</i><i>·</i><i>·</i><i>4</i></div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Tiny Tiles</h3><p>Merge matching numbers.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="casual" data-name="orbit bounce"><button class="card-art art-orbit" data-play="orbit" aria-label="Play Orbit Bounce"><span class="art-label">03 / CASUAL</span><div class="planet"><i></i></div><div class="orbiter">✦</div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Orbit Bounce</h3><p>One more jump. You got this.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="action" data-name="pixel sprint"><button class="card-art art-sprint" data-play="sprint" aria-label="Play Pixel Sprint"><span class="art-label">04 / ACTION</span><div class="sunset"></div><div class="runner">♟</div><div class="ground"></div><span class="art-title">RUN<br>IT BACK</span><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Pixel Sprint</h3><p>Race the clock.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="puzzle" data-name="color drop"><button class="card-art art-drop" data-play="drop" aria-label="Play Color Drop"><span class="art-label">05 / PUZZLE</span><div class="drop-shape">●</div><div class="drop-trail"></div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Color Drop</h3><p>Pick the matching shade.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="casual" data-name="lucky bounce"><button class="card-art art-lucky" data-play="lucky" aria-label="Play Lucky Bounce"><span class="art-label">06 / CASUAL</span><div class="lucky-ball">✳</div><div class="lucky-stars">· &nbsp; ✦ &nbsp; ·</div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Lucky Bounce</h3><p>Keep bouncing to the top.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="puzzle" data-name="thief puzzle"><button class="card-art art-thief" data-play="famobi" aria-label="Play Thief Puzzle"><span class="art-label">07 / PUZZLE · WEB</span><div class="thief-silhouette">♟</div><span class="thief-stamp">STEAL<br>THE WIN</span><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Thief Puzzle</h3><p>Steal the prize without getting caught.</p></div><span class="play-icon">↗</span></div></article>
+        <article class="game-card" data-category="action" data-name="1v1 lol battle royale shooter"><a class="card-art art-1v1" href="https://www.crazygames.com/game/1v1-lol" target="_blank" rel="noopener noreferrer" aria-label="Play 1v1 LOL on CrazyGames"><span class="art-label">08 / MULTIPLAYER · WEB</span><span class="arena-mark"></span><span class="arena-text">1V1.LOL</span><span class="art-arrow">↗</span></a><div class="card-meta"><div><h3>1v1.LOL</h3><p>Build, battle, and duel.</p></div><span class="play-icon">↗</span></div></article>
       </div>
       <p class="empty" id="empty">NO MATCHES. TRY ANOTHER SEARCH.</p>
     </section>
-    <section class="about" id="about"><span class="about-icon">✳</span><p>Too late to log off.<br><b>One more round.</b></p><span class="about-note">BUILT AFTER HOURS<br>© 2026 AFTERDARK</span></section>
+    <section class="about" id="about"><span class="about-icon">✳</span><p>Too late to log off.<br><b>One more round.</b></p><div class="social-links" aria-label="Social media"><a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer"><span>♪</span> TIKTOK</a><a href="https://kick.com/" target="_blank" rel="noopener noreferrer"><span>K</span> KICK</a><a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer"><span>▶</span> YOUTUBE</a></div><span class="about-note">CHROME<br>© 2026</span></section>
   </main>
-  <footer><a class="brand" href="#top"><span class="brand-mark">✳</span><span>AFTERDARK</span></a><span>NO SLEEP. JUST SCORE.</span><a href="#top">BACK TO TOP ↑</a></footer>
+  <footer><a class="brand" href="#top"><span class="brand-mark chrome-mark">C</span><span>CHROME</span></a><span>NO SLEEP. JUST SCORE.</span><a href="#top">BACK TO TOP ↑</a></footer>
 
-  <dialog id="game-modal"><div class="modal-head"><div><span class="eyebrow">AFTERDARK ARCADE · 001</span><h2 id="modal-title">JUEGO</h2></div><button id="close-modal" aria-label="Cerrar juego">✕</button></div><div id="game-stage"></div><p class="modal-help" id="modal-help"></p></dialog>
+  <dialog id="game-modal"><div class="modal-head"><div><span class="eyebrow">CHROME · 001</span><h2 id="modal-title">GAME</h2></div><button id="close-modal" aria-label="Close game">✕</button></div><div id="game-stage"></div><p class="modal-help" id="modal-help"></p></dialog>
   <script src="script.js"></script>
 </body>
 </html>
