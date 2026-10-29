@@ -31,3 +31,5 @@ h1{font-family:'Bebas Neue',var(--sans);font-size:clamp(72px,9vw,122px);line-hei
 
 .about-copy{max-width:760px}.about .about-tag{font:8px var(--mono);letter-spacing:.17em;color:#c0b7bc;margin:0 0 9px}.about .about-description{font:10px/1.8 var(--mono);letter-spacing:.055em;color:#a99da2;margin:0}@media(max-width:760px){.about{align-items:flex-start}.about-copy{flex:1}.about .about-description{font-size:9px;line-height:1.7}}
 
+:root{--sans:Arial,Helvetica,sans-serif}.games-section h2,.card-meta h3{font-family:Arial,Helvetica,sans-serif;font-weight:700;letter-spacing:-.035em}.games-section h2 em{font-style:normal;font-weight:700}.card-meta p,.about .about-description{font-family:Arial,Helvetica,sans-serif;letter-spacing:0}
+
