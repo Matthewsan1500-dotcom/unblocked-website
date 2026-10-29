@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101014">
+  <meta name="description" content="Arcade gratis en tu navegador. Juega sin descargas.">
+  <title>AfterBell Arcade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="AfterBell inicio"><span class="brand-mark">A<span>.</span></span><span>AFTERBELL</span></a>
+    <nav aria-label="Navegación principal"><a class="active" href="#games">JUEGOS</a><a href="#about">INFO</a></nav>
+    <div class="online"><i></i> ARCADE ONLINE</div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy"><p class="eyebrow"><span>01</span> TU RECREO EMPIEZA AQUÍ</p><h1>NO HAY<br>CLASE. <em>HAY</em><br>JUEGO.</h1><p class="intro">Una pausa rápida, una partida más.<br>Juegos gratis que corren en tu navegador.</p><a class="primary" href="#games">VER LOS JUEGOS <span>↘</span></a></div>
+      <div class="hero-art" aria-label="Ilustración de una máquina arcade"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="spark s1">✳</div><div class="spark s2">✳</div><div class="arcade"><div class="cabinet-top"><span>AFTER<br>BELL</span><b>★</b></div><div class="screen"><div class="pixel-sun"></div><div class="pixel-hill"></div><div class="pixel-hill hill-two"></div><div class="screen-text">PRESS START</div></div><div class="controls"><span class="stick"></span><i></i><i></i></div><div class="cabinet-base"></div></div><div class="hero-tag">INSERT COIN<br>TO CONTINUE <b>↗</b></div><span class="art-index">FIG. 001 — ARCADE MACHINE</span></div>
+      <div class="side-note">HECHO PARA<br>EL RATITO LIBRE <span>✳</span></div>
+    </section>
+
+    <section class="games-section" id="games">
+      <div class="section-head"><div><p class="eyebrow"><span>02</span> SELECCIÓN DE HOY</p><h2>ELIGE TU <em>JUEGO</em></h2></div><label class="search"><span>⌕</span><input id="search" type="search" placeholder="BUSCAR JUEGO" aria-label="Buscar juego"><kbd>/</kbd></label></div>
+      <div class="filters" role="group" aria-label="Filtrar por categoría"><button class="filter selected" data-filter="all">TODO <small>06</small></button><button class="filter" data-filter="arcade">ARCADE</button><button class="filter" data-filter="puzzle">PUZZLE</button><button class="filter" data-filter="casual">CASUAL</button><span class="results">06 JUEGOS DISPONIBLES</span></div>
+      <div class="grid" id="game-grid">
+        <article class="game-card featured" data-category="arcade" data-name="neon drift"><button class="card-art art-drift" data-play="drift" aria-label="Jugar Neon Drift"><span class="art-label">01 / ARCADE</span><div class="road"><i></i><i></i><i></i></div><div class="car">▰</div><span class="art-title">NEON<br>DRIFT</span><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Neon Drift</h3><p>Esquiva. Sobrevive. Repite.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="puzzle" data-name="tiny tiles"><button class="card-art art-tiles" data-play="tiles" aria-label="Jugar Tiny Tiles"><span class="art-label">02 / PUZZLE</span><div class="tile-board"><i>2</i><i>4</i><i>·</i><i>8</i><i>·</i><i>2</i><i>·</i><i>·</i><i>4</i></div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Tiny Tiles</h3><p>Une los números iguales.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="casual" data-name="orbit bounce"><button class="card-art art-orbit" data-play="orbit" aria-label="Jugar Orbit Bounce"><span class="art-label">03 / CASUAL</span><div class="planet"><i></i></div><div class="orbiter">✦</div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Orbit Bounce</h3><p>Un salto más y ya.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="arcade" data-name="pixel sprint"><button class="card-art art-sprint" data-play="sprint" aria-label="Jugar Pixel Sprint"><span class="art-label">04 / ARCADE</span><div class="sunset"></div><div class="runner">♟</div><div class="ground"></div><span class="art-title">RUN<br>IT BACK</span><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Pixel Sprint</h3><p>Corre contra el reloj.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="puzzle" data-name="color drop"><button class="card-art art-drop" data-play="drop" aria-label="Jugar Color Drop"><span class="art-label">05 / PUZZLE</span><div class="drop-shape">●</div><div class="drop-trail"></div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Color Drop</h3><p>Atina el color correcto.</p></div><span class="play-icon">▶</span></div></article>
+        <article class="game-card" data-category="casual" data-name="lucky bounce"><button class="card-art art-lucky" data-play="lucky" aria-label="Jugar Lucky Bounce"><span class="art-label">06 / CASUAL</span><div class="lucky-ball">✳</div><div class="lucky-stars">· &nbsp; ✦ &nbsp; ·</div><span class="art-arrow">↗</span></button><div class="card-meta"><div><h3>Lucky Bounce</h3><p>Rebota hasta la cima.</p></div><span class="play-icon">▶</span></div></article>
+      </div>
+      <p class="empty" id="empty">No hay juegos con ese nombre twin</p>
+    </section>
+    <section class="about" id="about"><span class="about-icon">✳</span><p>Sin descargas. Sin drama.<br><b>Solo abre y juega.</b></p><span class="about-note">UN PROYECTO DE RECREO<br>© 2025 AFTERBELL</span></section>
+  </main>
+  <footer><a class="brand" href="#top"><span class="brand-mark">A<span>.</span></span><span>AFTERBELL</span></a><span>BUILT FOR THE BREAK BETWEEN BELLS.</span><a href="#top">VOLVER ARRIBA ↑</a></footer>
+
+  <dialog id="game-modal"><div class="modal-head"><div><span class="eyebrow">AFTERBELL ARCADE</span><h2 id="modal-title">JUEGO</h2></div><button id="close-modal" aria-label="Cerrar juego">✕</button></div><div id="game-stage"></div><p class="modal-help" id="modal-help"></p></dialog>
+  <script src="script.js"></script>
+</body>
+</html>
+
