@@ -1,7 +1,28 @@
 const cards = [...document.querySelectorAll('.game-card')];
 const filters = [...document.querySelectorAll('.filter')];
 const search = document.querySelector('#search');
+const modal = document.querySelector('#game-modal');
+const stage = document.querySelector('#game-stage');
+const title = document.querySelector('#modal-title');
+const help = document.querySelector('#modal-help');
 let category = 'all';
+let cleanupGame = () => {};
+let activeKeyHandler = null;
+
+// Small, low-contrast falling stars keep the background alive without adding color noise.
+const starfield = document.querySelector('.starfield');
+if (starfield && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  for (let i = 0; i < 34; i++) {
+    const star = document.createElement('i');
+    star.className = 'falling-star';
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.animationDuration = `${9 + Math.random() * 15}s`;
+    star.style.animationDelay = `${-Math.random() * 24}s`;
+    star.style.setProperty('--drift', `${Math.round(Math.random() * 120 - 60)}px`);
+    star.style.opacity = `${0.18 + Math.random() * 0.45}`;
+    starfield.append(star);
+  }
+}
 
 function refreshCards() {
   const query = search.value.trim().toLowerCase();
@@ -27,60 +48,195 @@ document.addEventListener('keydown', event => {
   }
 });
 
-const modal = document.querySelector('#game-modal');
-const stage = document.querySelector('#game-stage');
-const title = document.querySelector('#modal-title');
-const help = document.querySelector('#modal-help');
-let cleanGame = () => {};
-let gameKeyHandler = null;
-const gameNames = {drift:'NEON DRIFT',tiles:'TINY TILES',orbit:'ORBIT BOUNCE',sprint:'PIXEL SPRINT',drop:'COLOR DROP',lucky:'LUCKY BOUNCE'};
+const gameNames = {
+  drift: 'NEON DRIFT', tiles: 'TINY TILES', orbit: 'ORBIT BOUNCE',
+  sprint: 'PIXEL SPRINT', drop: 'COLOR DROP', lucky: 'LUCKY BOUNCE', famobi: 'THIEF PUZZLE'
+};
 
 function openGame(name) {
-  cleanGame();
-  if (gameKeyHandler) document.removeEventListener('keydown', gameKeyHandler);
-  title.textContent = gameNames[name];
-  stage.innerHTML = '';
+  cleanupGame();
+  if (activeKeyHandler) document.removeEventListener('keydown', activeKeyHandler);
+  title.textContent = gameNames[name] || 'AFTERDARK ARCADE';
+  stage.replaceChildren();
   modal.showModal();
-  const ui = document.createElement('div'); ui.className = 'game-ui'; stage.append(ui);
 
-  if (name === 'drift') {
-    help.textContent = 'Usa ← → o A D para moverte y esquivar los bloques';
-    let x = 50, score = 0, running = false, obstacleY = -40, lane = 1, frame;
-    ui.innerHTML = '<div class="drift-track"></div><span class="game-score">0 M</span><span class="player-car">▰</span><span class="obstacle">▰</span><div class="game-message"><h3>Neon Drift</h3><p>Esquiva el tráfico todo lo que puedas</p><button>EMPEZAR</button></div>';
-    const player = ui.querySelector('.player-car'), obstacle = ui.querySelector('.obstacle'), scoreEl = ui.querySelector('.game-score'), message = ui.querySelector('.game-message');
-    const position = () => { player.style.left = `calc(50% + ${x - 50}px - 15px)`; obstacle.style.left = `calc(50% + ${lane * 48 - 24}px - 15px)`; };
-    position();
-    const key = e => { if (['ArrowLeft','a','A'].includes(e.key)) x = Math.max(27, x - 12); if (['ArrowRight','d','D'].includes(e.key)) x = Math.min(73, x + 12); position(); };
-    gameKeyHandler = key; document.addEventListener('keydown', key);
-    const tick = () => { if (!running) return; obstacleY += 4 + score / 120; if (obstacleY > 310) { obstacleY = -35; lane = Math.floor(Math.random()*3)-1; score += 10; scoreEl.textContent = `${score} M`; position(); } obstacle.style.top = `${obstacleY}px`; if (obstacleY > 235 && obstacleY < 290 && Math.abs(x - (50 + lane * 16)) < 13) { running = false; message.innerHTML = `<h3>Fin de la partida</h3><p>Recorriste ${score} metros</p><button>OTRA VEZ</button>`; message.style.display = 'block'; return; } frame = requestAnimationFrame(tick); };
-    const start = () => { x=50;score=0;obstacleY=-40;lane=1;running=true;message.style.display='none';scoreEl.textContent='0 M';position();tick(); };
-    message.querySelector('button').onclick = start;
-    ui.addEventListener('click', e=>{if(e.target.tagName==='BUTTON') start()});
-    cleanGame = () => { running=false;cancelAnimationFrame(frame); };
-  } else if (name === 'tiles') {
-    help.textContent = 'Desliza con las flechas o WASD para unir números iguales';
-    let board = Array(16).fill(0), score = 0;
-    const draw = () => { ui.innerHTML = `<span class="game-score">${score} PTS</span><div class="puzzle-grid">${board.map(n=>`<i>${n||''}</i>`).join('')}</div>`; };
-    const spawn = () => { const empty=board.map((v,i)=>v?null:i).filter(v=>v!==null); if(empty.length) board[empty[Math.floor(Math.random()*empty.length)]]=Math.random()<.85?2:4; };
-    const move = key => { const dirs={ArrowLeft:'L',a:'L',ArrowRight:'R',d:'R',ArrowUp:'U',w:'U',ArrowDown:'D',s:'D'};let dir=dirs[key];if(!dir)return;let changed=false;
-      for(let a=0;a<4;a++){let ids=Array.from({length:4},(_,b)=>dir==='L'?a*4+b:dir==='R'?a*4+3-b:dir==='U'?b*4+a:(3-b)*4+a);let vals=ids.map(i=>board[i]).filter(Boolean);for(let i=0;i<vals.length-1;i++)if(vals[i]===vals[i+1]){vals[i]*=2;score+=vals[i];vals.splice(i+1,1)}while(vals.length<4)vals.push(0);ids.forEach((id,j)=>{if(board[id]!==vals[j])changed=true;board[id]=vals[j]});}
-      if(changed){spawn();draw();}
-    };
-    spawn();spawn();draw();gameKeyHandler=e=>move(e.key);document.addEventListener('keydown',gameKeyHandler);
+  if (name === 'famobi') {
+    help.textContent = 'Juego alojado por Famobi. Si no carga, ábrelo en otra pestaña.';
+    stage.innerHTML = '<div class="famobi-wrap"><iframe class="famobi-frame" src="https://play.famobi.com/thief-puzzle" title="Thief Puzzle" allow="autoplay; fullscreen; gamepad" allowfullscreen loading="eager"></iframe><div class="famobi-fallback">¿No carga? <a href="https://play.famobi.com/thief-puzzle" target="_blank" rel="noopener noreferrer">Abrir Thief Puzzle ↗</a></div></div>';
+    cleanupGame = () => {};
+    return;
+  }
+
+  const ui = document.createElement('div');
+  ui.className = 'game-ui';
+  stage.append(ui);
+
+  if (name === 'tiles') {
+    startTiles(ui);
+  } else if (name === 'orbit') {
+    startTimingGame(ui, {type:'orbit', instruction:'Toca cuando el punto cruce la marca. Cada ronda acelera.'});
+  } else if (name === 'lucky') {
+    startTimingGame(ui, {type:'lucky', instruction:'Alinea el rebote con la marca. Tienes tres fallos.'});
   } else if (name === 'drop') {
-    help.textContent = 'Toca el botón cuando el objetivo coincida con el color elegido';
-    let score=0, target=0; const colors=['#ff684f','#c5fa43','#68c9ed','#bd76e8'];
-    const draw=()=>{ui.innerHTML=`<span class="game-score">${score} PTS</span><div><button class="color-target" style="background:${colors[target]};color:${colors[target]}"></button><div class="color-options">${colors.map((c,i)=>`<button aria-label="Color ${i+1}" data-color="${i}" style="background:${c}"></button>`).join('')}</div></div>`;ui.querySelectorAll('[data-color]').forEach(b=>b.onclick=()=>{if(+b.dataset.color===target)score+=10;else score=Math.max(0,score-5);target=(target+1)%colors.length;draw()});};draw();
-  } else {
-    const labels={orbit:'TOCA PARA REBOTAR',sprint:'PRESIONA PARA CORRER',lucky:'TOCA PARA REBOTAR'};
-    const instruction={orbit:'Cada toque te da otro salto. ¿Cuántos aguantas?',sprint:'Toca tan rápido como puedas en 10 segundos',lucky:'Cada toque te acerca a la cima'};
-    help.textContent=instruction[name];let score=0,time=10,started=false,timer;
-    const draw=()=>{ui.innerHTML=`<span class="tap-count">${name==='sprint'&&started?`TIEMPO ${time}`:`${score} ${name==='sprint'?'TOQUES':'REBOTES'}`}</span><button class="${name==='orbit'?'orbit-play':name==='lucky'?'drop-play':'sprint-play'}">${name==='orbit'?'✦':name==='lucky'?'●':'▶'}<span>${started?'¡SIGUE!':labels[name]}</span></button>`;ui.querySelector('button').onclick=()=>{if(name==='sprint'&&!started){started=true;timer=setInterval(()=>{time--;draw();if(time<=0){clearInterval(timer);started=false;ui.innerHTML=`<div class="game-message"><h3>${score} toques</h3><p>Se acabó el tiempo</p><button>OTRA VEZ</button></div>`;ui.querySelector('button').onclick=()=>{score=0;time=10;draw()}}},1000)} if(name!=='sprint'||started)score++;draw()};};draw();cleanGame=()=>clearInterval(timer);
+    startColorGame(ui);
+  } else if (name === 'drift' || name === 'sprint') {
+    startLaneGame(ui, name);
   }
 }
 
-document.querySelectorAll('[data-play]').forEach(button => button.addEventListener('click', () => openGame(button.dataset.play)));
-document.querySelector('#close-modal').addEventListener('click', () => modal.close());
-modal.addEventListener('close', () => {cleanGame();if(gameKeyHandler)document.removeEventListener('keydown',gameKeyHandler);stage.innerHTML='';});
+function startLaneGame(ui, mode) {
+  const sprint = mode === 'sprint';
+  help.textContent = sprint ? '← → o A/D para cambiar de carril. Aguanta 30 segundos.' : '← → o A/D para esquivar. En móvil, toca el lado izquierdo o derecho.';
+  ui.innerHTML = `<div class="drift-track"></div><span class="game-score">0 ${sprint ? 'PTS' : 'M'}</span><span class="player-car">▰</span><span class="obstacle">▰</span><div class="game-message"><h3>${gameNames[mode]}</h3><p>${sprint ? 'Corre por los carriles y evita los obstáculos.' : 'Esquiva el tráfico y llega lo más lejos posible.'}</p><button>EMPEZAR</button></div>`;
+  const player = ui.querySelector('.player-car');
+  const obstacle = ui.querySelector('.obstacle');
+  const scoreEl = ui.querySelector('.game-score');
+  const message = ui.querySelector('.game-message');
+  const lanes = [-64, 0, 64];
+  let playerLane = 1, obstacleLane = 1, y = -45, score = 0, running = false, lastTime = 0, frame = 0, timeLeft = 30;
 
+  const place = () => {
+    player.style.left = `calc(50% + ${lanes[playerLane]}px - 15px)`;
+    obstacle.style.left = `calc(50% + ${lanes[obstacleLane]}px - 15px)`;
+  };
+  const move = event => {
+    if (!running) return;
+    if (['ArrowLeft','a','A'].includes(event.key)) playerLane = Math.max(0, playerLane - 1);
+    if (['ArrowRight','d','D'].includes(event.key)) playerLane = Math.min(2, playerLane + 1);
+    place();
+  };
+  activeKeyHandler = move;
+  document.addEventListener('keydown', move);
+  ui.addEventListener('pointerdown', event => {
+    if (!running || event.target.closest('button')) return;
+    const rect = ui.getBoundingClientRect();
+    playerLane = event.clientX < rect.left + rect.width / 2 ? Math.max(0, playerLane - 1) : Math.min(2, playerLane + 1);
+    place();
+  });
+
+  function finish(text) {
+    running = false;
+    cancelAnimationFrame(frame);
+    message.innerHTML = `<h3>${text}</h3><p>${sprint ? `Puntuación: ${score}` : `Llegaste a ${score} m`}</p><button>OTRA VEZ</button>`;
+    message.style.display = 'block';
+    message.querySelector('button').onclick = start;
+  }
+  function tick(now) {
+    if (!running) return;
+    const dt = Math.min((now - lastTime) / 1000 || 0, 0.05);
+    lastTime = now;
+    y += (sprint ? 285 : 230 + score * 2) * dt;
+    obstacle.style.top = `${y}px`;
+    if (y > 290 && y < 345 && obstacleLane === playerLane) return finish('GAME OVER');
+    if (y > 340) {
+      y = -48;
+      obstacleLane = Math.floor(Math.random() * 3);
+      score += sprint ? 100 : 10;
+      scoreEl.textContent = `${score} ${sprint ? 'PTS' : 'M'}`;
+      place();
+    }
+    if (sprint) {
+      timeLeft -= dt;
+      scoreEl.textContent = `${score} PTS · ${Math.ceil(timeLeft)}S`;
+      if (timeLeft <= 0) return finish('TIEMPO');
+    }
+    frame = requestAnimationFrame(tick);
+  }
+  function start() {
+    playerLane = 1; obstacleLane = Math.floor(Math.random() * 3); y = -48; score = 0; timeLeft = 30;
+    scoreEl.textContent = sprint ? '0 PTS · 30S' : '0 M';
+    message.style.display = 'none'; running = true; lastTime = performance.now(); place();
+    frame = requestAnimationFrame(tick);
+  }
+  message.querySelector('button').onclick = start;
+  place();
+  cleanupGame = () => { running = false; cancelAnimationFrame(frame); };
+}
+
+function startTiles(ui) {
+  help.textContent = 'Une números iguales con las flechas o WASD. Llega a 2048.';
+  ui.innerHTML = '<div class="puzzle-game"><div class="puzzle-toolbar"><span>PUNTOS <b class="tile-score">0</b> · RÉCORD <b class="tile-best">0</b></span><button class="tile-reset">NUEVA PARTIDA</button></div><div class="puzzle-grid"></div><div class="tile-message"></div></div>';
+  const grid = ui.querySelector('.puzzle-grid'), scoreLabel = ui.querySelector('.tile-score'), bestLabel = ui.querySelector('.tile-best'), message = ui.querySelector('.tile-message');
+  let board = Array(16).fill(0), score = 0, best = Number(localStorage.getItem('afterdark-tiles-best') || 0), finished = false;
+  bestLabel.textContent = best;
+  const render = () => {
+    grid.innerHTML = board.map(value => `<i ${value ? `data-value="${value}"` : ''}>${value || ''}</i>`).join('');
+    scoreLabel.textContent = score;
+  };
+  const spawn = () => {
+    const empty = board.map((value, index) => value ? -1 : index).filter(index => index >= 0);
+    if (empty.length) board[empty[Math.floor(Math.random() * empty.length)]] = Math.random() < .88 ? 2 : 4;
+  };
+  const gameOver = () => {
+    if (board.includes(0)) return false;
+    for (let row=0; row<4; row++) for (let col=0; col<4; col++) {
+      const i=row*4+col;
+      if (col<3 && board[i]===board[i+1]) return false;
+      if (row<3 && board[i]===board[i+4]) return false;
+    }
+    return true;
+  };
+  const move = event => {
+    const directions={ArrowLeft:'L',a:'L',ArrowRight:'R',d:'R',ArrowUp:'U',w:'U',ArrowDown:'D',s:'D'};
+    const direction=directions[event.key];
+    if (!direction || finished) return;
+    event.preventDefault();
+    let changed=false;
+    for (let line=0; line<4; line++) {
+      const ids=Array.from({length:4},(_,n)=>direction==='L'?line*4+n:direction==='R'?line*4+3-n:direction==='U'?n*4+line:(3-n)*4+line);
+      const values=ids.map(index=>board[index]).filter(Boolean);
+      for(let i=0;i<values.length-1;i++) if(values[i]===values[i+1]) { values[i]*=2;score+=values[i];values.splice(i+1,1); }
+      while(values.length<4) values.push(0);
+      ids.forEach((id,i)=>{if(board[id]!==values[i])changed=true;board[id]=values[i];});
+    }
+    if (!changed) return;
+    if(score>best){best=score;localStorage.setItem('afterdark-tiles-best',best);bestLabel.textContent=best;}
+    spawn();render();
+    if(board.includes(2048)){finished=true;message.textContent='¡Llegaste a 2048! Pulsa nueva partida para seguir.';}
+    else if(gameOver()){finished=true;message.textContent='Sin movimientos. Inicia otra partida.';}
+  };
+  const reset = () => {board=Array(16).fill(0);score=0;finished=false;message.textContent='';spawn();spawn();render();};
+  activeKeyHandler=move;document.addEventListener('keydown',move);
+  ui.querySelector('.tile-reset').onclick=reset;
+  reset();
+}
+
+function startTimingGame(ui, {type, instruction}) {
+  help.textContent = instruction;
+  const isOrbit=type==='orbit';
+  ui.innerHTML=`<span class="game-score">${isOrbit?'REBOTES':'ALTURA'} 0 · FALLOS 0/3</span><div class="game-prompt"><h3>${gameNames[type]}</h3><p>${instruction}</p><div class="timing-ring"><span class="timing-target"></span><span class="timing-needle"></span><span class="timing-core">${isOrbit?'✦':'●'}</span></div><button class="tap-button">${isOrbit?'SALTAR':'REBOTAR'}</button></div>`;
+  const scoreEl=ui.querySelector('.game-score'), needle=ui.querySelector('.timing-needle'), button=ui.querySelector('.tap-button'), heading=ui.querySelector('.game-prompt h3'), copy=ui.querySelector('.game-prompt p');
+  let angle=-90, speed=150, score=0, misses=0, playing=true, last=0, frame;
+  function tick(now){if(!playing)return;const dt=Math.min((now-last)/1000||0,.05);last=now;angle=(angle+speed*dt)%360;needle.style.transform=`translate(-50%,-50%) rotate(${angle}deg) translateY(-79px)`;frame=requestAnimationFrame(tick);}
+  function end(){playing=false;cancelAnimationFrame(frame);heading.textContent='FIN DE LA PARTIDA';copy.textContent=`Puntuación final: ${score}. Toca otra vez para reiniciar.`;button.textContent='REINTENTAR';}
+  function reset(){angle=-90;speed=150;score=0;misses=0;playing=true;heading.textContent=gameNames[type];copy.textContent=instruction;button.textContent=isOrbit?'SALTAR':'REBOTAR';scoreEl.textContent=`${isOrbit?'REBOTES':'ALTURA'} 0 · FALLOS 0/3`;last=performance.now();frame=requestAnimationFrame(tick);}
+  button.onclick=()=>{
+    if(!playing){reset();return;}
+    const distance=Math.min(Math.abs(angle-270),360-Math.abs(angle-270));
+    if(distance<15){score++;speed=Math.min(320,speed+12);button.classList.add('hit');setTimeout(()=>button.classList.remove('hit'),120);}
+    else misses++;
+    scoreEl.textContent=`${isOrbit?'REBOTES':'ALTURA'} ${score} · FALLOS ${misses}/3`;
+    if(misses>=3)end();
+  };
+  cleanupGame=()=>{playing=false;cancelAnimationFrame(frame);};
+  reset();
+}
+
+function startColorGame(ui) {
+  help.textContent='Elige el color que coincide con el objetivo. Completa 10 rondas y cuida tus tres vidas.';
+  const colors=[['CENIZA','#9f959a'],['VINO','#793348'],['NOCHE','#383238'],['PLATA','#d0c6ca']];
+  let score=0,lives=3,target=0,round=1,locked=false;
+  function draw(){
+    ui.innerHTML=`<span class="game-score">RONDA ${round}/10 · VIDAS ${'♥'.repeat(lives)}${'♡'.repeat(3-lives)}</span><div class="game-prompt"><h3>${round>10?'LISTO.':`ELIGE ${colors[target][0]}`}</h3><p>${round>10?`Puntuación final: ${score}/10`:'Toca el tono correcto para seguir.'}</p><div class="color-choice-grid">${colors.map(([label,color],i)=>`<button class="color-choice" data-color="${i}" style="--swatch:${color}">${label}</button>`).join('')}</div>${round>10?'<button class="tap-button color-restart">OTRA VEZ</button>':''}</div>`;
+    ui.querySelectorAll('[data-color]').forEach(button=>{button.style.background=`linear-gradient(135deg, ${colors[button.dataset.color][1]} 0 42%, #171316 42% 100%)`;button.onclick=()=>choose(Number(button.dataset.color));});
+    const restart=ui.querySelector('.color-restart');if(restart)restart.onclick=reset;
+  }
+  function choose(index){if(locked||round>10)return;locked=true;if(index===target)score++;else lives--;round++;if(lives<=0||round>10){round=11;}target=Math.floor(Math.random()*colors.length);setTimeout(()=>{locked=false;draw();},180);}
+  function reset(){score=0;lives=3;round=1;target=Math.floor(Math.random()*colors.length);draw();}
+  reset();
+}
+
+document.querySelectorAll('[data-play]').forEach(button=>button.addEventListener('click',()=>openGame(button.dataset.play)));
+document.querySelector('#close-modal').addEventListener('click',()=>modal.close());
+modal.addEventListener('close',()=>{cleanupGame();if(activeKeyHandler)document.removeEventListener('keydown',activeKeyHandler);stage.replaceChildren();});
 
