@@ -3,46 +3,28 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#100b0e">
-  <meta name="description" content="Browser games for after hours.">
-  <title>CHROME</title>
+  <meta name="theme-color" content="#101216">
+  <meta name="description" content="Study Hall student portal.">
+  <title>STUDY HALL</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Righteous&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261029-plain-type">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20261029-study-cover">
+  <style>
+    :root{--school-bg:#101216;--school-ink:#e5e7e9;--school-muted:#8e939a;--school-line:#30343a}
+    *{box-sizing:border-box}html,body{min-height:100%;margin:0}body{min-height:100vh;background:radial-gradient(ellipse at 50% 42%,#272b31 0,#171a1f 32%,#101216 75%);color:var(--school-ink);font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
+    body:before,body:after{content:"";position:fixed;pointer-events:none;border:1px solid rgba(208,214,222,.1);border-radius:50%;width:min(70vw,780px);height:min(70vw,780px);left:50%;top:48%;transform:translate(-50%,-50%)}body:after{width:min(52vw,570px);height:min(52vw,570px);border-color:rgba(208,214,222,.07)}
+    .school-page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}.school-header,.school-footer{display:flex;align-items:center;justify-content:space-between;padding:28px 7vw;color:#a8adb4;font:9px 'DM Mono',monospace;letter-spacing:.17em}.school-brand{display:flex;align-items:center;gap:11px;color:#e1e3e6}.school-mark{width:29px;height:29px;border:1px solid #bfc4cb;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#e9ebed,#696e75 66%,#24272d);color:#131519;font:700 16px Arial,sans-serif;box-shadow:0 0 20px #d3d9e222}.school-status{display:flex;align-items:center;gap:9px}.school-status:before{content:"";width:5px;height:5px;border-radius:50%;background:#bfc5cc;box-shadow:0 0 10px #d5d9de}
+    .school-main{flex:1;display:grid;place-items:center;text-align:center;padding:45px 22px 76px}.school-content{max-width:720px}.school-eyebrow{margin:0 0 24px;color:#acb1b8;font:9px 'DM Mono',monospace;letter-spacing:.24em}.school-title{margin:0;color:#e8eaed;font-size:clamp(70px,14vw,150px);line-height:.78;letter-spacing:-.085em;font-weight:800;text-shadow:0 10px 45px #0008}.school-title span{display:block;color:#aeb4bc}.school-subtitle{max-width:440px;margin:28px auto 30px;color:#a7abb2;font-size:14px;line-height:1.7}.homework-button{display:inline-flex;align-items:center;gap:34px;min-height:52px;padding:0 20px;background:linear-gradient(145deg,#e1e4e8,#9298a0);color:#15171b;border:1px solid #f0f2f4;font:700 10px 'DM Mono',monospace;letter-spacing:.13em;box-shadow:0 10px 35px #0007;transition:transform .2s,box-shadow .2s}.homework-button:hover{transform:translateY(-3px);box-shadow:0 14px 44px #c9cdd522}.homework-button span{font-size:18px}.school-hint{margin:18px 0 0;color:#7e838a;font:8px 'DM Mono',monospace;letter-spacing:.16em}.school-footer{border-top:1px solid var(--school-line);font-size:8px}.school-footer a{color:#aeb4bc}.school-footer a:hover{color:#fff}
+    @media(max-width:600px){.school-header,.school-footer{padding:20px 6vw}.school-main{padding:40px 7vw 60px}.school-title{font-size:clamp(68px,20vw,112px)}.school-subtitle{font-size:13px}}
+  </style>
 </head>
 <body>
-  <div class="starfield" aria-hidden="true"></div>
-  <header class="topbar">
-    <a class="brand" href="#top" aria-label="Chrome home"><span class="brand-mark chrome-mark">C</span><span>CHROME</span></a>
-    <nav aria-label="Main navigation"><a class="active" href="#games">GAMES</a><a href="#about">ABOUT</a></nav>
-    <div class="top-actions"><a class="corner-games" href="#games">GAMES <span>↘</span></a></div>
-  </header>
-
-  <main id="top">
-    <section class="hero">
-      <div class="hero-art" aria-label="Chrome wordmark"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="spark s1">✳</div><div class="spark s2">✳</div><div class="chrome-emblem"><span class="chrome-word">CHROME</span><span class="development-note">WEBSITE IN DEVELOPMENT</span><div class="social-links" aria-label="Social media"><a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer"><span>♪</span> TIKTOK</a><a href="https://kick.com/" target="_blank" rel="noopener noreferrer"><span>K</span> KICK</a><a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer"><span>▶</span> YOUTUBE</a></div></div></div>
-    </section>
-
-    <section class="games-section" id="games">
-      <div class="section-head"><div><p class="eyebrow"><span>02</span> THE MIDNIGHT ROTATION</p><h2>CHOOSE YOUR <em>POISON</em></h2></div><label class="search"><span>⌕</span><input id="search" type="search" placeholder="SEARCH GAMES" aria-label="Search games"><kbd>/</kbd></label></div>
-      <div class="filters" role="group" aria-label="Game collection"><button class="filter selected" data-filter="all">ALL <small>06</small></button><button class="filter" data-filter="action">ACTION</button><button class="filter" data-filter="puzzle">PUZZLE</button><span class="results">06 GAMES AVAILABLE</span></div>
-      <div class="grid compact" id="game-grid">
-        <article class="game-card" data-category="puzzle" data-name="thief puzzle"><a class="card-art art-thief" href="https://play.famobi.com/thief-puzzle" target="_blank" rel="noopener noreferrer" aria-label="Play Thief Puzzle"><span class="art-label">01 / PUZZLE · WEB</span><div class="thief-silhouette">♟</div><img class="game-logo" src="https://ik.imagekit.io/sjyfpsp1n/marketing/featuredGames/thief-puzzle/logo.png" alt="Thief Puzzle logo" loading="lazy"><span class="art-arrow">↗</span></a><div class="card-meta"><div><h3>Thief Puzzle</h3><p>Steal the prize without getting caught.</p></div><span class="play-icon">↗</span></div></article>
-        <article class="game-card" data-category="puzzle" data-name="glass break"><a class="card-art art-glass" href="https://play.famobi.com/glass-break" target="_blank" rel="noopener noreferrer" aria-label="Play Glass Break"><span class="art-label">02 / PUZZLE · WEB</span><span class="glass-pane">◇</span><span class="glass-shard shard-one">✧</span><span class="glass-shard shard-two">✦</span><img class="game-logo" src="https://ik.imagekit.io/sjyfpsp1n/marketing/featuredGames/glass-break/logo.png" alt="Glass Break logo" loading="lazy"><span class="art-arrow">↗</span></a><div class="card-meta"><div><h3>Glass Break</h3><p>Break through the glass and clear each stage.</p></div><span class="play-icon">↗</span></div></article>
-        <article class="game-card" data-category="action" data-name="om nom run runner"><a class="card-art art-omnom" href="https://play.famobi.com/om-nom-run" target="_blank" rel="noopener noreferrer" aria-label="Play Om Nom Run"><span class="art-label">03 / ACTION · WEB</span><span class="omnom-character">●</span><span class="run-trail trail-one"></span><span class="run-trail trail-two"></span><img class="game-logo" src="https://ik.imagekit.io/sjyfpsp1n/marketing/featuredGames/om-nom-run/logo.png?v2" alt="Om Nom Run logo" loading="lazy"><span class="art-arrow">↗</span></a><div class="card-meta"><div><h3>Om Nom Run</h3><p>Run, dodge, and collect rewards.</p></div><span class="play-icon">↗</span></div></article>
-        <article class="game-card" data-category="action" data-name="moto x3m pool party motorcycle"><a class="card-art art-moto" href="https://play.famobi.com/moto-x3m-pool-party" target="_blank" rel="noopener noreferrer" aria-label="Play Moto X3M Pool Party"><span class="art-label">04 / ACTION · WEB</span><span class="moto-wheel wheel-one"></span><span class="moto-wheel wheel-two"></span><span class="moto-frame">╱╲</span><img class="game-logo moto-logo" src="https://img.cdn.famobi.com/portal/html5games/images/tmp/MotoX3mPoolPartyTeaser.jpg" alt="Moto X3M Pool Party game logo" loading="lazy"><span class="art-arrow">↗</span></a><div class="card-meta"><div><h3>Moto X3M Pool Party</h3><p>Race through wild poolside stunts.</p></div><span class="play-icon">↗</span></div></article>
-        <article class="game-card" data-category="action" data-name="jetpack joyride endless runner"><a class="card-art art-jetpack" href="https://openhtml5games.com/play/jetpack-joyride-pcp" target="_blank" rel="noopener noreferrer" aria-label="Play Jetpack Joyride"><span class="art-label">05 / ACTION · WEB</span><span class="jetpack-flame">✦</span><span class="jetpack-pack">▣</span><span class="jetpack-runner">●</span><img class="game-logo" src="https://www.vhv.rs/dpng/d/314-3144419_jetpack-joyride-logo-transparent-hd-png-download.png" alt="Jetpack Joyride logo" loading="lazy"><span class="art-arrow">↗</span></a><div class="card-meta"><div><h3>Jetpack Joyride</h3><p>Blast through the lab with a jetpack.</p></div><span class="play-icon">↗</span></div></article>
-        <article class="game-card" data-category="puzzle" data-name="hero tower clash math tower"><a class="card-art art-hero-tower" href="https://www.y8.com/games/hero_tower_clash" target="_blank" rel="noopener noreferrer" aria-label="Play Hero Tower Clash"><span class="art-label">06 / PUZZLE · WEB</span><span class="tower-stack"><i>4</i><i>2</i><i>1</i></span><span class="hero-tower-logo">HERO<br>TOWER CLASH</span><span class="art-arrow">↗</span></a><div class="card-meta"><div><h3>Hero Tower Clash</h3><p>Build your hero's power floor by floor.</p></div><span class="play-icon">↗</span></div></article>
-      </div>
-      <p class="empty" id="empty">NO MATCHES. TRY ANOTHER SEARCH.</p>
-    </section>
-    <section class="about" id="about"><span class="about-icon">✳</span><div class="about-copy"><p class="about-tag">ABOUT CHROME</p><p class="about-description">CHROME IS A SMALL COLLECTION OF BROWSER GAMES FOR QUICK BREAKS AND LATE NIGHTS. PICK A GAME FROM THE LIBRARY TO OPEN IT ON ITS HOSTING SITE. THIS WEBSITE IS STILL IN DEVELOPMENT, WITH MORE GAMES AND IMPROVEMENTS COMING.</p></div><span class="about-note">CHROME<br>© 2026</span></section>
-  </main>
-  <footer><a class="brand" href="#top"><span class="brand-mark chrome-mark">C</span><span>CHROME</span></a><a href="#top">BACK TO TOP ↑</a></footer>
-
-  <dialog id="game-modal"><div class="modal-head"><div><span class="eyebrow">CHROME · 001</span><h2 id="modal-title">GAME</h2></div><button id="close-modal" aria-label="Close game">✕</button></div><div id="game-stage"></div><p class="modal-help" id="modal-help"></p></dialog>
-  <script src="script.js"></script>
+  <div class="school-page">
+    <header class="school-header"><div class="school-brand"><span class="school-mark">S</span><span>STUDY HALL</span></div><span class="school-status">STUDENT PORTAL</span></header>
+    <main class="school-main"><div class="school-content"><p class="school-eyebrow">FOCUS · LEARN · RESET</p><h1 class="school-title">STUDY<span>HALL</span></h1><p class="school-subtitle">A quiet space for your school day, your next assignment, and a little time to reset.</p><a class="homework-button" href="chrome.html">HOMEWORK <span>↗</span></a><p class="school-hint">OPEN YOUR PERSONAL PORTAL</p></div></main>
+    <footer class="school-footer"><span>STUDY HALL · STUDENT PORTAL</span><a href="#top">BACK TO TOP ↑</a></footer>
+  </div>
 </body>
 </html>
 
