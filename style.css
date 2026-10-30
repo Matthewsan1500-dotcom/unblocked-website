@@ -106,3 +106,8 @@ html[data-mode="light"]{--bg:#d6d8dd;--panel:#dedfe3;--panel2:#ced0d6}html[data-
 .web-new-tab:hover{border-color:var(--accent-line);background:#30212a}
 .web-browser-frame[hidden]{display:none}
 @media(max-width:600px){.web-tabs-bar{padding-left:6px;padding-right:6px}.web-tab{min-width:78px;max-width:135px}.web-tab-select{padding:0 6px;font-size:7px}}
+
+/* Keep the browser viewport fitted beneath its tabs and controls */
+.web-browser-dialog[open]{display:flex;flex-direction:column}
+.web-browser-stage{height:auto;flex:1;min-height:0}
+.web-browser-note{flex:0 0 30px;box-sizing:border-box}
