@@ -9,6 +9,23 @@ const browserUrl = document.querySelector('#browser-url');
 let activeGameUrl = '';
 let category = 'all';
 const favoriteStorageKey = 'chrome-game-favorites-v1';
+const accountStorageKeys = ['chrome-game-favorites-v1', 'chrome-recent-games-v1', 'chrome-player-progress-v1', 'chrome-player-profile-v1'];
+const accountDialog = document.querySelector('#account-dialog');
+const accountForm = document.querySelector('#account-form');
+const accountEmail = document.querySelector('#account-email');
+const accountPassword = document.querySelector('#account-password');
+const accountMessage = document.querySelector('#account-message');
+const accountSubmit = document.querySelector('#account-submit');
+const accountSwitch = document.querySelector('#account-switch');
+const accountSignout = document.querySelector('#account-signout');
+const accountButton = document.querySelector('#account-button');
+const accountStatus = document.querySelector('#account-status');
+let accountMode = 'signin';
+let signedInUser = null;
+let cloudSaveTimer = null;
+const supabaseConfig = window.STUDYHALL_SUPABASE_CONFIG || {};
+const supabaseReady = Boolean(supabaseConfig.url && supabaseConfig.publishableKey && !supabaseConfig.url.includes('YOUR_') && !supabaseConfig.publishableKey.includes('YOUR_') && window.supabase?.createClient);
+const supabaseClient = supabaseReady ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.publishableKey) : null;
 let favorites = new Set();
 try {
   favorites = new Set(JSON.parse(localStorage.getItem(favoriteStorageKey) || '[]'));
@@ -75,6 +92,7 @@ cards.forEach(card => {
     try {
       localStorage.setItem(favoriteStorageKey, JSON.stringify([...favorites]));
     } catch {}
+    queueCloudSave();
     updateFavoriteCount();
     renderProfile();
     renderAchievements();
@@ -174,6 +192,7 @@ playerProgress.multiplayerUnique = Array.isArray(playerProgress.multiplayerUniqu
 
 function persistProgress() {
   try { localStorage.setItem(progressStorageKey, JSON.stringify(playerProgress)); } catch {}
+  queueCloudSave();
 }
 
 function renderProfile() {
@@ -306,6 +325,7 @@ document.querySelectorAll('#avatar-picker [data-avatar]').forEach(button => butt
 document.querySelector('#save-profile').addEventListener('click', () => {
   playerProfile = { name: profileNameInput.value.trim().slice(0, 18) || 'Player One', avatar: selectedAvatar };
   try { localStorage.setItem(profileStorageKey, JSON.stringify(playerProfile)); } catch {}
+  queueCloudSave();
   renderProfile();
   profileDialog.close();
 });
@@ -330,6 +350,7 @@ function saveRecent(game) {
   try {
     localStorage.setItem(recentStorageKey, JSON.stringify(recentGames));
   } catch {}
+  queueCloudSave();
   renderRecentGames();
   recordGameOpen(game);
 }
@@ -448,3 +469,155 @@ surpriseModal.addEventListener('click', event => {
   if (event.target === surpriseModal) surpriseModal.close();
 });
 surpriseModal.addEventListener('close', rouletteModalReset);
+
+function setAccountMode(mode) {
+  accountMode = mode;
+  const signingUp = mode === 'signup';
+  document.querySelector('#account-title').textContent = signingUp ? 'CREATE ACCOUNT' : 'SIGN IN';
+  accountSubmit.textContent = signingUp ? 'CREATE ACCOUNT' : 'SIGN IN';
+  accountSwitch.textContent = signingUp ? 'Already have an account? Sign in' : 'New here? Create an account';
+  accountPassword.autocomplete = signingUp ? 'new-password' : 'current-password';
+  accountMessage.textContent = '';
+}
+
+function updateAccountUI() {
+  if (signedInUser) {
+    accountButton.textContent = 'ACCOUNT';
+    accountStatus.textContent = `SYNCED TO ${signedInUser.email.toUpperCase()}`;
+    accountSignout.hidden = false;
+    accountForm.hidden = true;
+    accountSwitch.hidden = true;
+    accountMessage.textContent = `Signed in as ${signedInUser.email}`;
+    return;
+  }
+  accountButton.textContent = 'SIGN IN';
+  accountStatus.textContent = supabaseReady ? 'SIGN IN TO SYNC ACROSS DEVICES' : 'ACCOUNT SETUP NEEDED';
+  accountSignout.hidden = true;
+  accountForm.hidden = false;
+  accountSwitch.hidden = !supabaseReady;
+  accountMessage.textContent = supabaseReady ? '' : 'Cloud accounts need a Supabase project connection first';
+}
+
+function queueCloudSave() {
+  if (!signedInUser || !supabaseClient) return;
+  window.clearTimeout(cloudSaveTimer);
+  accountStatus.textContent = 'SYNCING ACCOUNT…';
+  cloudSaveTimer = window.setTimeout(async () => {
+    const row = {
+      user_id: signedInUser.id,
+      profile: playerProfile,
+      progress: playerProgress,
+      favorites: [...favorites],
+      recent_games: recentGames,
+      updated_at: new Date().toISOString()
+    };
+    const { error } = await supabaseClient.from('player_saves').upsert(row, { onConflict: 'user_id' });
+    if (error) {
+      accountStatus.textContent = 'CLOUD SYNC ERROR';
+      console.error('Could not sync player save', error.message);
+    } else if (signedInUser) accountStatus.textContent = `SYNCED TO ${signedInUser.email.toUpperCase()}`;
+  }, 500);
+}
+
+function saveCloudDataToDevice(row) {
+  if (row?.profile && typeof row.profile === 'object') playerProfile = { name: String(row.profile.name || 'Player One').slice(0, 18), avatar: String(row.profile.avatar || 'C') };
+  if (row?.progress && typeof row.progress === 'object') playerProgress = row.progress;
+  if (row?.favorites && Array.isArray(row.favorites)) favorites = new Set(row.favorites);
+  if (row?.recent_games && Array.isArray(row.recent_games)) recentGames = row.recent_games.slice(0, 8);
+  if (!playerProgress || typeof playerProgress !== 'object') playerProgress = emptyProgress();
+  if (playerProgress.week !== weekStamp()) playerProgress = { ...emptyProgress(), allUnique: playerProgress.allUnique || [], spins: playerProgress.spins || 0, multiplayerUnique: playerProgress.multiplayerUnique || [] };
+  playerProgress.weeklyUnique = Array.isArray(playerProgress.weeklyUnique) ? playerProgress.weeklyUnique : [];
+  playerProgress.allUnique = Array.isArray(playerProgress.allUnique) ? playerProgress.allUnique : [];
+  playerProgress.multiplayerUnique = Array.isArray(playerProgress.multiplayerUnique) ? playerProgress.multiplayerUnique : [];
+  try {
+    localStorage.setItem(profileStorageKey, JSON.stringify(playerProfile));
+    localStorage.setItem(progressStorageKey, JSON.stringify(playerProgress));
+    localStorage.setItem(favoriteStorageKey, JSON.stringify([...favorites]));
+    localStorage.setItem(recentStorageKey, JSON.stringify(recentGames));
+  } catch {}
+  updateFavoriteCount();
+  renderProfile();
+  renderChallenges();
+  renderAchievements();
+  renderRecentGames();
+}
+
+async function handleAuthSession(session) {
+  signedInUser = session?.user || null;
+  updateAccountUI();
+  if (!signedInUser) return;
+  const userId = signedInUser.id;
+  const { data, error } = await supabaseClient.from('player_saves').select('profile, progress, favorites, recent_games').eq('user_id', userId).maybeSingle();
+  if (signedInUser?.id !== userId) return;
+  if (error) {
+    accountStatus.textContent = 'CLOUD SAVE TABLE NOT READY';
+    accountMessage.textContent = 'The account database setup still needs to be completed';
+    return;
+  }
+  if (data) saveCloudDataToDevice(data);
+  else queueCloudSave();
+  updateAccountUI();
+}
+
+accountButton.addEventListener('click', () => {
+  setAccountMode('signin');
+  updateAccountUI();
+  accountDialog.showModal();
+});
+document.querySelector('#close-account').addEventListener('click', () => accountDialog.close());
+accountDialog.addEventListener('click', event => { if (event.target === accountDialog) accountDialog.close(); });
+accountSwitch.addEventListener('click', () => setAccountMode(accountMode === 'signin' ? 'signup' : 'signin'));
+accountForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!supabaseClient) {
+    accountMessage.textContent = 'Cloud login is not connected yet. Add the Supabase URL and publishable key to supabase-config.js';
+    return;
+  }
+  accountSubmit.disabled = true;
+  accountMessage.textContent = accountMode === 'signup' ? 'Creating account…' : 'Signing in…';
+  const email = accountEmail.value.trim();
+  const password = accountPassword.value;
+  const result = accountMode === 'signup'
+    ? await supabaseClient.auth.signUp({ email, password, options: { emailRedirectTo: `${location.origin}${location.pathname}` } })
+    : await supabaseClient.auth.signInWithPassword({ email, password });
+  accountSubmit.disabled = false;
+  if (result.error) {
+    accountMessage.textContent = result.error.message;
+    return;
+  }
+  if (accountMode === 'signup' && !result.data.session) {
+    accountMessage.textContent = 'Account created. Check your email to confirm it, then sign in here.';
+    return;
+  }
+  if (result.data.session) {
+    await handleAuthSession(result.data.session);
+    accountDialog.close();
+  }
+});
+accountSignout.addEventListener('click', async () => {
+  if (!supabaseClient) return;
+  const { error } = await supabaseClient.auth.signOut();
+  if (error) {
+    accountMessage.textContent = error.message;
+    return;
+  }
+  signedInUser = null;
+  accountStorageKeys.forEach(key => localStorage.removeItem(key));
+  favorites = new Set();
+  recentGames = [];
+  playerProfile = { name: 'Player One', avatar: 'C' };
+  playerProgress = emptyProgress();
+  updateFavoriteCount();
+  renderProfile();
+  renderChallenges();
+  renderAchievements();
+  renderRecentGames();
+  updateAccountUI();
+  setAccountMode('signin');
+});
+
+if (supabaseClient) {
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    queueMicrotask(() => handleAuthSession(session));
+  });
+} else updateAccountUI();
