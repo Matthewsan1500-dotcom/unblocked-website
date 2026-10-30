@@ -114,3 +114,13 @@ html[data-mode="light"]{--bg:#d6d8dd;--panel:#dedfe3;--panel2:#ced0d6}html[data-
 
 /* Keep the browser and settings controls visible on compact desktop windows. */
 @media(min-width:761px) and (max-width:1050px){.topbar{padding-left:4%;padding-right:4%;gap:14px}.topbar nav{gap:14px;margin-left:0}.top-actions{gap:6px}.corner-games{display:none}}
+
+/* CHROME browser usability improvements */
+.web-browser-welcome{padding:24px;box-sizing:border-box}
+.web-browser-welcome small{max-width:540px;color:#a99da2;font:8px/1.6 var(--mono);letter-spacing:.08em;text-align:center}
+.web-quick-links{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:8px}
+.web-quick-links button{min-width:92px;min-height:36px;padding:0 13px;border:1px solid #65505a;background:#191419;color:#f0e9ed;font:8px var(--mono);letter-spacing:.1em;cursor:pointer;transition:border-color .18s,background .18s,transform .18s}
+.web-quick-links button:hover,.web-quick-links button:focus-visible{border-color:var(--accent-line);background:#30212a;transform:translateY(-1px);outline:none}
+#web-open-external{border-color:var(--accent-line);color:var(--accent-bright)}
+#web-open-external:hover{background:#30212a}
+@media(max-width:600px){.web-quick-links{gap:6px}.web-quick-links button{min-width:76px;min-height:34px;padding:0 9px;font-size:7px}}
