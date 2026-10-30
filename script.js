@@ -346,7 +346,7 @@ function renderMultiplayer() {
     const arrow = document.createElement('i');
     arrow.textContent = '↗';
     link.append(label, arrow);
-    link.addEventListener('click', () => saveRecent(game));
+    link.addEventListener('click', event => { event.preventDefault(); saveRecent(game); openGame(game); });
     return link;
   }));
 }
@@ -440,7 +440,35 @@ function renderRecentGames() {
   });
 }
 
-cards.forEach(card => card.querySelector('.card-art').addEventListener('click', () => saveRecent(getGameInfo(card))));
+function openGame(game) {
+  activeGameUrl = game.url;
+  title.textContent = game.title;
+  try {
+    const parsed = new URL(game.url);
+    browserUrl.textContent = parsed.hostname.replace(/^www\./, '').toUpperCase();
+  } catch {
+    browserUrl.textContent = 'CHROME / GAMES';
+  }
+  const frame = document.createElement('iframe');
+  frame.className = 'browser-frame';
+  frame.title = game.title;
+  frame.src = game.url;
+  frame.allow = 'autoplay; fullscreen; gamepad; accelerometer; gyroscope; picture-in-picture';
+  frame.allowFullscreen = true;
+  frame.referrerPolicy = 'strict-origin-when-cross-origin';
+  frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation');
+  stage.replaceChildren(frame);
+  help.textContent = 'Playing inside Chrome. If this game stays blank, its website may block embedded play.';
+  modal.showModal();
+}
+
+cards.forEach(card => {
+  const link = card.querySelector('.card-art');
+  link.addEventListener('click', event => {
+    event.preventDefault();
+    openGame(getGameInfo(card));
+  });
+});
 renderRecentGames();
 
 function spinTicket(game) {
@@ -521,8 +549,9 @@ function rouletteModalReset() {
 }
 
 spinButton.addEventListener('click', startRoulette);
-roulettePlay.addEventListener('click', () => {
-  if (rouletteWinner) saveRecent(rouletteWinner);
+roulettePlay.addEventListener('click', event => {
+  event.preventDefault();
+  if (rouletteWinner) { saveRecent(rouletteWinner); openGame(rouletteWinner); }
 });
 document.querySelector('#close-surprise').addEventListener('click', () => surpriseModal.close());
 surpriseModal.addEventListener('click', event => {
