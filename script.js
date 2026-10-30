@@ -68,11 +68,16 @@ cards.forEach(card => {
   favoriteButton.addEventListener('click', () => {
     const gameUrl = favoriteButton.dataset.gameUrl;
     if (favorites.has(gameUrl)) favorites.delete(gameUrl);
-    else favorites.add(gameUrl);
+    else {
+      favorites.add(gameUrl);
+      recordFavoriteSave();
+    }
     try {
       localStorage.setItem(favoriteStorageKey, JSON.stringify([...favorites]));
     } catch {}
     updateFavoriteCount();
+    renderProfile();
+    renderAchievements();
     if (category === 'favorites') refreshCards();
   });
 });
@@ -100,6 +105,8 @@ document.querySelector('#close-modal').addEventListener('click', () => modal.clo
 modal.addEventListener('close', () => stage.replaceChildren());
 
 const recentStorageKey = 'chrome-recent-games-v1';
+const progressStorageKey = 'chrome-player-progress-v1';
+const profileStorageKey = 'chrome-player-profile-v1';
 const recentGrid = document.querySelector('#recent-grid');
 const recentNote = document.querySelector('#recent-note');
 const surpriseModal = document.querySelector('#surprise-modal');
@@ -115,10 +122,200 @@ let rouletteSpinning = false;
 let rouletteWinner = null;
 let rouletteTimer = null;
 let rouletteSession = 0;
+const multiplayerUrls = new Set([
+  'https://www.crazygames.com/game/buildnow-gg',
+  'https://www.crazygames.com/game/hyperblox-shooting',
+  'https://www.crazygames.com/game/soldiers---capture-and-control',
+  'https://www.crazygames.com/game/dye-hard',
+  'https://www.crazygames.com/game/polytrack',
+  'https://www.crazygames.com/game/krash-karts',
+  'https://www.crazygames.com/game/12-minibattles'
+]);
+const multiplayerGrid = document.querySelector('#multiplayer-grid');
+const challengeList = document.querySelector('#challenge-list');
+const achievementsGrid = document.querySelector('#achievements-grid');
+const profileDialog = document.querySelector('#profile-dialog');
+const profileNameInput = document.querySelector('#profile-name-input');
+let selectedAvatar = 'C';
+let playerProfile = { name: 'Player One', avatar: 'C' };
+let playerProgress = {};
 try {
   recentGames = JSON.parse(localStorage.getItem(recentStorageKey) || '[]');
   if (!Array.isArray(recentGames)) recentGames = [];
 } catch {}
+
+try {
+  const savedProfile = JSON.parse(localStorage.getItem(profileStorageKey) || 'null');
+  if (savedProfile && typeof savedProfile === 'object') {
+    playerProfile = { name: String(savedProfile.name || 'Player One').slice(0, 18), avatar: String(savedProfile.avatar || 'C') };
+  }
+} catch {}
+
+function weekStamp() {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function emptyProgress() {
+  return { week: weekStamp(), weeklyOpens: 0, weeklyUnique: [], weeklyFavorites: 0, allUnique: [], spins: 0, multiplayerUnique: [] };
+}
+
+try {
+  playerProgress = JSON.parse(localStorage.getItem(progressStorageKey) || 'null') || emptyProgress();
+} catch {
+  playerProgress = emptyProgress();
+}
+if (playerProgress.week !== weekStamp()) playerProgress = { ...emptyProgress(), allUnique: playerProgress.allUnique || [], spins: playerProgress.spins || 0, multiplayerUnique: playerProgress.multiplayerUnique || [] };
+playerProgress.weeklyUnique = Array.isArray(playerProgress.weeklyUnique) ? playerProgress.weeklyUnique : [];
+playerProgress.allUnique = Array.isArray(playerProgress.allUnique) ? playerProgress.allUnique : [];
+playerProgress.multiplayerUnique = Array.isArray(playerProgress.multiplayerUnique) ? playerProgress.multiplayerUnique : [];
+
+function persistProgress() {
+  try { localStorage.setItem(progressStorageKey, JSON.stringify(playerProgress)); } catch {}
+}
+
+function renderProfile() {
+  const xp = playerProgress.allUnique.length * 20 + favorites.size * 10 + (Number(playerProgress.spins) || 0) * 5;
+  const level = Math.floor(xp / 100) + 1;
+  document.querySelector('#profile-avatar').textContent = playerProfile.avatar;
+  document.querySelector('#profile-name').textContent = playerProfile.name.toUpperCase();
+  document.querySelector('#profile-level').textContent = String(level).padStart(2, '0');
+  document.querySelector('#profile-xp').textContent = `${xp} XP`;
+  document.querySelector('#xp-fill').style.width = `${xp % 100}%`;
+}
+
+function renderChallenges() {
+  const challenges = [
+    { title: 'Open 5 games', value: Number(playerProgress.weeklyOpens) || 0, goal: 5, detail: 'Play a few rounds this week' },
+    { title: 'Try 4 different games', value: playerProgress.weeklyUnique.length, goal: 4, detail: 'Explore the game library' },
+    { title: 'Save 3 favorites', value: Number(playerProgress.weeklyFavorites) || 0, goal: 3, detail: 'Tap the heart on games you like' }
+  ];
+  challengeList.replaceChildren(...challenges.map(challenge => {
+    const item = document.createElement('article');
+    item.className = 'challenge-item';
+    const copy = document.createElement('div');
+    copy.className = 'challenge-copy';
+    const titleNode = document.createElement('b');
+    titleNode.textContent = challenge.title;
+    const detail = document.createElement('span');
+    detail.textContent = challenge.detail;
+    copy.append(titleNode, detail);
+    const count = document.createElement('span');
+    count.className = 'challenge-count';
+    count.textContent = `${Math.min(challenge.value, challenge.goal)} / ${challenge.goal}`;
+    const track = document.createElement('div');
+    track.className = 'challenge-track';
+    const fill = document.createElement('i');
+    fill.style.width = `${Math.min(100, challenge.value / challenge.goal * 100)}%`;
+    track.append(fill);
+    item.append(copy, count, track);
+    return item;
+  }));
+}
+
+function renderAchievements() {
+  const unlocked = [
+    playerProgress.allUnique.length >= 1,
+    playerProgress.allUnique.length >= 10,
+    favorites.size >= 5,
+    (Number(playerProgress.spins) || 0) >= 5,
+    playerProgress.multiplayerUnique.length >= 3
+  ];
+  const achievements = [
+    ['FIRST DROP', 'Open your first game'],
+    ['NIGHT EXPLORER', 'Play 10 different games'],
+    ['CURATOR', 'Save 5 games as favorites'],
+    ['LUCKY SPIN', 'Spin the surprise reel 5 times'],
+    ['SQUAD UP', 'Try 3 multiplayer games']
+  ];
+  document.querySelector('#achievement-count').textContent = `${unlocked.filter(Boolean).length} / ${unlocked.length} UNLOCKED`;
+  achievementsGrid.replaceChildren(...achievements.map(([name, description], index) => {
+    const item = document.createElement('article');
+    item.className = `achievement-card${unlocked[index] ? ' unlocked' : ''}`;
+    const icon = document.createElement('span');
+    icon.className = 'achievement-icon';
+    icon.textContent = unlocked[index] ? '✦' : '◇';
+    const titleNode = document.createElement('b');
+    titleNode.textContent = name;
+    const detail = document.createElement('span');
+    detail.textContent = description;
+    const state = document.createElement('small');
+    state.textContent = unlocked[index] ? 'UNLOCKED' : 'LOCKED';
+    item.append(icon, titleNode, detail, state);
+    return item;
+  }));
+}
+
+function renderMultiplayer() {
+  const picks = cards.filter(card => multiplayerUrls.has(card.querySelector('.card-art').href)).slice(0, 7);
+  multiplayerGrid.replaceChildren(...picks.map(card => {
+    const game = getGameInfo(card);
+    const link = document.createElement('a');
+    link.className = 'friend-card';
+    link.href = game.url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    if (game.poster) {
+      const image = document.createElement('img');
+      image.src = game.poster;
+      image.alt = '';
+      image.loading = 'lazy';
+      link.append(image);
+    }
+    const label = document.createElement('span');
+    label.textContent = game.title;
+    const arrow = document.createElement('i');
+    arrow.textContent = '↗';
+    link.append(label, arrow);
+    link.addEventListener('click', () => saveRecent(game));
+    return link;
+  }));
+}
+
+function recordGameOpen(game) {
+  playerProgress.weeklyOpens = (Number(playerProgress.weeklyOpens) || 0) + 1;
+  if (!playerProgress.weeklyUnique.includes(game.url)) playerProgress.weeklyUnique.push(game.url);
+  if (!playerProgress.allUnique.includes(game.url)) playerProgress.allUnique.push(game.url);
+  if (multiplayerUrls.has(game.url) && !playerProgress.multiplayerUnique.includes(game.url)) playerProgress.multiplayerUnique.push(game.url);
+  persistProgress();
+  renderProfile();
+  renderChallenges();
+  renderAchievements();
+}
+
+function recordFavoriteSave() {
+  playerProgress.weeklyFavorites = (Number(playerProgress.weeklyFavorites) || 0) + 1;
+  persistProgress();
+  renderProfile();
+  renderChallenges();
+  renderAchievements();
+}
+
+document.querySelector('#edit-profile').addEventListener('click', () => {
+  profileNameInput.value = playerProfile.name;
+  selectedAvatar = playerProfile.avatar;
+  document.querySelectorAll('#avatar-picker [data-avatar]').forEach(button => button.classList.toggle('selected', button.dataset.avatar === selectedAvatar));
+  profileDialog.showModal();
+});
+document.querySelectorAll('#avatar-picker [data-avatar]').forEach(button => button.addEventListener('click', () => {
+  selectedAvatar = button.dataset.avatar;
+  document.querySelectorAll('#avatar-picker [data-avatar]').forEach(item => item.classList.toggle('selected', item === button));
+}));
+document.querySelector('#save-profile').addEventListener('click', () => {
+  playerProfile = { name: profileNameInput.value.trim().slice(0, 18) || 'Player One', avatar: selectedAvatar };
+  try { localStorage.setItem(profileStorageKey, JSON.stringify(playerProfile)); } catch {}
+  renderProfile();
+  profileDialog.close();
+});
+document.querySelector('#close-profile').addEventListener('click', () => profileDialog.close());
+profileDialog.addEventListener('click', event => { if (event.target === profileDialog) profileDialog.close(); });
+
+renderProfile();
+renderChallenges();
+renderAchievements();
+renderMultiplayer();
 
 function getGameInfo(card) {
   return {
@@ -134,6 +331,7 @@ function saveRecent(game) {
     localStorage.setItem(recentStorageKey, JSON.stringify(recentGames));
   } catch {}
   renderRecentGames();
+  recordGameOpen(game);
 }
 
 function renderRecentGames() {
@@ -182,6 +380,10 @@ function spinTicket(game) {
 
 function startRoulette() {
   if (rouletteSpinning) return;
+  playerProgress.spins = (Number(playerProgress.spins) || 0) + 1;
+  persistProgress();
+  renderProfile();
+  renderAchievements();
   const session = ++rouletteSession;
   rouletteSpinning = true;
   rouletteWinner = null;
