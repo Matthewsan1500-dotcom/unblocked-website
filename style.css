@@ -51,3 +51,5 @@ h1{font-family:'Bebas Neue',var(--sans);font-size:clamp(72px,9vw,122px);line-hei
 .filters{flex-wrap:wrap;column-gap:18px;row-gap:0}@media(max-width:760px){.filters{column-gap:14px;row-gap:6px}.results{width:100%;margin-left:0}}
 
 .game-of-day .card-art{border-color:#b7aeb2;box-shadow:0 0 28px #b7aeb22b}.game-of-day .card-meta h3{color:#f2ecee}.game-day-badge{position:absolute;z-index:3;right:13px;top:12px;padding:8px 10px;border:1px solid #e3dadd;background:#171518d9;color:#f4eef0;font:8px var(--mono);letter-spacing:.13em;backdrop-filter:blur(8px);box-shadow:0 3px 18px #0008}
+
+.favorite-toggle{padding:0;background:transparent;cursor:pointer;color:#c7b6bd;transition:background .18s,color .18s,border-color .18s,transform .18s}.favorite-toggle span{font:19px/1 Arial,sans-serif;transform:translateY(-1px)}.favorite-toggle:hover{color:#fff;border-color:#dfb8c4;background:#744153;transform:scale(1.07)}.favorite-toggle.is-favorite{color:#fff;border-color:#bc758b;background:#772b43;box-shadow:0 0 13px #a34d6848}.favorite-toggle:focus-visible{outline:2px solid #eee7ea;outline-offset:3px}
