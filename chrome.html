@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Righteous&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261030-browser-desktop-fix">
+  <link rel="stylesheet" href="style.css?v=20261030-browser-plus">
 </head>
 <body>
   <div class="starfield" aria-hidden="true"></div>
@@ -93,9 +93,9 @@
       <input id="web-address" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="Search Google or enter a website address" aria-label="Search or enter website address">
       <button class="web-go" type="submit">GO ↗</button>
     </form>
-    <div class="web-browser-status"><span id="web-status">READY TO BROWSE</span><button id="web-open-external" type="button">WHY NOT LOADING?</button></div>
-    <div class="web-browser-stage" id="web-browser-stage"><div class="web-browser-welcome"><span>CHROME</span><p>SEARCH THE WEB OR ENTER A WEBSITE ADDRESS</p></div></div>
-    <p class="web-browser-note">APP LINKS OPEN INSIDE THIS CHROME WINDOW WHEN THE WEBSITE ALLOWS EMBEDDING. SOME SITES BLOCK IT.</p>
+    <div class="web-browser-status"><span id="web-status">READY TO BROWSE</span><button id="web-open-external" type="button">OPEN OUTSIDE ↗</button></div>
+    <div class="web-browser-stage" id="web-browser-stage"><div class="web-browser-welcome"><span>CHROME</span><p>SEARCH THE WEB OR ENTER A WEBSITE ADDRESS</p><div class="web-quick-links"><button type="button" data-web-url="https://www.google.com/">GOOGLE</button><button type="button" data-web-url="https://www.tiktok.com/">TIKTOK</button><button type="button" data-web-url="https://aether.cx/">AETHER</button><button type="button" data-web-url="https://www.youtube.com/">YOUTUBE</button></div><small>IF A SITE DOES NOT LOAD HERE, TRY OPEN OUTSIDE</small></div></div>
+    <p class="web-browser-note">CHROME TRIES TO SHOW SITES HERE. IF A SITE BLOCKS EMBEDDING, USE OPEN OUTSIDE TO VISIT IT IN A NEW TAB.</p>
   </dialog>
   <dialog id="game-modal" aria-label="In-page game viewer"><div class="browser-toolbar"><button id="close-modal" class="browser-back" aria-label="Back to games">← <span>GAMES</span></button><div class="browser-address"><span class="browser-lock">S</span><span id="browser-url">STUDY HALL / GAMES</span></div><button id="reload-game" class="browser-reload" aria-label="Reload game">↻</button><button id="fullscreen-game" class="browser-reload" aria-label="Fullscreen game">⛶</button></div><div class="browser-title"><span class="browser-dot"></span><span id="modal-title">GAME</span><span class="browser-caption">IN-PAGE VIEW</span></div><div id="game-stage"></div><p class="modal-help" id="modal-help"></p></dialog>
   <dialog id="surprise-modal" class="surprise-modal" aria-labelledby="surprise-title"><div class="surprise-top"><div><p class="eyebrow">CHROME / RANDOM DROP</p><h2 id="surprise-title">SURPRISE <em>ME</em></h2></div><button class="surprise-close" id="close-surprise" type="button" aria-label="Close roulette">×</button></div><div class="roulette-window" id="roulette-window"><div class="roulette-marker" aria-hidden="true"></div><div class="roulette-track" id="roulette-track"></div></div><p class="roulette-status" id="roulette-status" aria-live="polite">LET THE WHEEL PICK YOUR NEXT GAME</p><div class="roulette-result" id="roulette-result" hidden><div><span class="eyebrow">YOUR NEXT GAME</span><h3 id="roulette-game-title">GAME</h3></div><a id="roulette-play" class="roulette-play" href="#" target="_blank" rel="noopener noreferrer">PLAY NOW ↗</a></div><button class="spin-button" id="spin-button" type="button">SPIN THE REEL <span>↻</span></button></dialog>
@@ -105,6 +105,6 @@
   <dialog id="feedback-dialog" class="profile-dialog feedback-dialog" aria-labelledby="feedback-dialog-title"><div class="surprise-top"><div><p class="eyebrow">CHROME / COMMUNITY FEEDBACK</p><h2 id="feedback-dialog-title">SUGGEST A <em>GAME</em></h2></div><button class="surprise-close" id="close-feedback" type="button" aria-label="Close feedback form">×</button></div><form id="feedback-form"><label class="profile-name-label" id="broken-game-field" for="broken-game">WHICH GAME IS BROKEN?<select id="broken-game"></select></label><label class="profile-name-label" id="suggested-title-field" for="suggested-title" hidden>GAME NAME<input id="suggested-title" maxlength="80" placeholder="GAME TITLE"></label><label class="profile-name-label" id="suggested-url-field" for="suggested-url" hidden>GAME LINK<input id="suggested-url" type="url" placeholder="https://..."></label><label class="profile-name-label" for="feedback-details">DETAILS<textarea id="feedback-details" rows="3" maxlength="1000" placeholder="Tell us a little more" required></textarea></label><p id="feedback-message" class="account-message" role="status" aria-live="polite">This opens a draft issue on GitHub for you to review and submit.</p><button id="feedback-submit" class="spin-button" type="submit">CONTINUE TO GITHUB ↗</button></form></dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js?v=20261029-accounts-v1"></script>
-  <script src="script.js?v=20261030-browser-desktop-fix"></script>
+  <script src="script.js?v=20261030-browser-plus"></script>
 </body>
 </html>
