@@ -20,6 +20,18 @@ const accountSwitch = document.querySelector('#account-switch');
 const accountSignout = document.querySelector('#account-signout');
 const accountButton = document.querySelector('#account-button');
 const accountStatus = document.querySelector('#account-status');
+const settingsDialog = document.querySelector('#settings-dialog');
+const accentStorageKey = 'chrome-accent-color-v1';
+const accentPalettes = {
+  red: { main: '#70253a', bright: '#c37484', line: '#a6546c', deep: '#541b29', rgb: '112,37,58' },
+  silver: { main: '#747982', bright: '#d2d4da', line: '#aeb2bb', deep: '#444852', rgb: '174,178,187' },
+  blue: { main: '#245c7c', bright: '#78b9df', line: '#4e9ac7', deep: '#173b51', rgb: '78,154,199' },
+  purple: { main: '#583677', bright: '#c09ae9', line: '#9a70c9', deep: '#38224e', rgb: '154,112,201' },
+  green: { main: '#245d48', bright: '#82d2aa', line: '#54a982', deep: '#173c2e', rgb: '84,169,130' },
+  orange: { main: '#74411e', bright: '#e5ad71', line: '#d58a45', deep: '#4e2b16', rgb: '213,138,69' },
+  pink: { main: '#762e51', bright: '#ed91bb', line: '#d9699b', deep: '#4e1e36', rgb: '217,105,155' }
+};
+let activeAccent = 'red';
 let accountMode = 'signin';
 let signedInUser = null;
 let cloudSaveTimer = null;
@@ -621,3 +633,32 @@ if (supabaseClient) {
     queueMicrotask(() => handleAuthSession(session));
   });
 } else updateAccountUI();
+
+function applyAccent(name, save = true) {
+  const selected = accentPalettes[name] ? name : 'red';
+  const colors = accentPalettes[selected];
+  activeAccent = selected;
+  const root = document.documentElement;
+  root.style.setProperty('--accent-main', colors.main);
+  root.style.setProperty('--accent-bright', colors.bright);
+  root.style.setProperty('--accent-line', colors.line);
+  root.style.setProperty('--accent-deep', colors.deep);
+  root.style.setProperty('--accent-rgb', colors.rgb);
+  root.dataset.accent = selected;
+  document.querySelectorAll('[data-accent-choice]').forEach(button => {
+    const isSelected = button.dataset.accentChoice === selected;
+    button.classList.toggle('selected', isSelected);
+    button.setAttribute('aria-pressed', String(isSelected));
+  });
+  if (save) {
+    try { localStorage.setItem(accentStorageKey, selected); } catch {}
+  }
+}
+
+let savedAccent = 'red';
+try { savedAccent = localStorage.getItem(accentStorageKey) || 'red'; } catch {}
+applyAccent(savedAccent, false);
+document.querySelector('#settings-button').addEventListener('click', () => settingsDialog.showModal());
+document.querySelector('#close-settings').addEventListener('click', () => settingsDialog.close());
+settingsDialog.addEventListener('click', event => { if (event.target === settingsDialog) settingsDialog.close(); });
+document.querySelectorAll('[data-accent-choice]').forEach(button => button.addEventListener('click', () => applyAccent(button.dataset.accentChoice)));
