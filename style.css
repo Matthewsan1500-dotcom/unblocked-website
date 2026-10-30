@@ -111,3 +111,6 @@ html[data-mode="light"]{--bg:#d6d8dd;--panel:#dedfe3;--panel2:#ced0d6}html[data-
 .web-browser-dialog[open]{display:flex;flex-direction:column}
 .web-browser-stage{height:auto;flex:1;min-height:0}
 .web-browser-note{flex:0 0 30px;box-sizing:border-box}
+
+/* Keep the browser and settings controls visible on compact desktop windows. */
+@media(min-width:761px) and (max-width:1050px){.topbar{padding-left:4%;padding-right:4%;gap:14px}.topbar nav{gap:14px;margin-left:0}.top-actions{gap:6px}.corner-games{display:none}}
