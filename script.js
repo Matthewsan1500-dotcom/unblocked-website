@@ -475,7 +475,9 @@ cards.forEach(card => {
   const link = card.querySelector('.card-art');
   link.addEventListener('click', event => {
     event.preventDefault();
-    openGame(getGameInfo(card));
+    const game = getGameInfo(card);
+    saveRecent(game);
+    openGame(game);
   });
 });
 renderRecentGames();
