@@ -681,11 +681,8 @@ function openGame(game) {
 
 cards.forEach(card => {
   const link = card.querySelector('.card-art');
-  link.addEventListener('click', event => {
-    event.preventDefault();
-    const game = getGameInfo(card);
-    saveRecent(game);
-    openGame(game);
+  link.addEventListener('click', () => {
+    saveRecent(getGameInfo(card));
   });
 });
 renderRecentGames();
