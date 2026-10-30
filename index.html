@@ -14,7 +14,7 @@ main{width:100%;max-width:1250px;margin:auto;padding:38px clamp(20px,5vw,58px) 7
 .card-body{padding:20px 18px 15px;min-height:93px}.teacher{color:#6c737c;font-size:12px}.card-foot{border-top:1px solid #edf0f4;height:47px;display:flex;align-items:center;justify-content:flex-end;padding:0 15px;color:#687078;font-size:19px}
 .detail{display:none;background:#fff;border:1px solid var(--line);border-radius:12px;margin-top:24px;overflow:hidden}.detail.show{display:block}.detail-banner{padding:26px;color:#fff}.detail-banner h2{margin:0 0 7px;font-size:24px;font-weight:500}.detail-banner p{margin:0;opacity:.9}.detail-content{padding:22px}.back{border:1px solid var(--line);background:white;border-radius:20px;padding:9px 15px;color:#3c5d8c;cursor:pointer}.announcement{padding:16px;border:1px solid var(--line);border-radius:9px;margin-top:16px;color:#59616b;line-height:1.6}.announcement b{color:#333}.footer{margin-top:42px;color:#9299a2;font-size:11px;text-align:center}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shell{grid-template-columns:205px minmax(0,1fr)}}
-@media(max-width:620px){.top{height:60px;padding:0 13px;gap:9px}.brand{font-size:16px}.page-name{font-size:13px}.shell{grid-template-columns:1fr}aside{display:flex;overflow-x:auto;padding:8px;border-right:0;border-bottom:1px solid var(--line)}.nav{white-space:nowrap;padding:10px 13px;margin:0;border-radius:22px}.nav-section,.side-class{display:none}main{padding:28px 16px 50px}.grid{grid-template-columns:1fr}.welcome h1{font-size:25px}.chrome{padding:9px 11px;font-size:11px}.avatar{display:none}.divider{height:23px}}
+@media(max-width:620px){.top{height:60px;padding:0 13px;gap:9px}.brand{font-size:16px}.page-name{font-size:13px}.shell{grid-template-columns:1fr}aside{display:flex;overflow-x:auto;padding:8px;border-right:0;border-bottom:1px solid var(--line)}.nav{white-space:nowrap;padding:10px 13px;margin:0;border-radius:22px}.nav-section,.side-class{display:none}main{padding:28px 16px 50px}.grid{grid-template-columns:1fr}.welcome h1{font-size:25px}.chrome{padding:9px 11px;font-size:11px}.add-class{padding:9px 10px;font-size:11px}.avatar{display:none}.divider{height:23px}}
 
 /* Dark space theme with very subtle golden stars */
 :root{--bg:#050505;--ink:#f1eee5;--muted:#a6a094;--line:#29261e;--blue:#d8bd72;--white:#11100d}
@@ -23,7 +23,7 @@ body{background-color:#050505!important;background-image:radial-gradient(1px 1px
 .brand{color:#bdb7a8!important}.brand b{color:#f2eee3!important}.brand-icon{background:#292416!important;color:#e0c879!important}
 .page-name,.nav,.side-class{color:#c8c1b1!important}.nav.active{background:#282315!important;color:#e3cc82!important}
 .nav-section,.teacher,.count,.welcome p,.section-title span{color:#a6a094!important}
-.chrome{background:#292315!important;color:#e4d08f!important}
+.chrome{background:#292315!important;color:#e4d08f!important}\n.add-class{border:1px solid #51452a;background:#17150f;color:#d9c27b;padding:10px 14px;border-radius:22px;font-weight:600;font-size:13px;cursor:pointer}.add-class:hover{background:#292315}
 .avatar{background:#302a1b!important;color:#e6d79e!important}
 .class-card{background:rgba(18,17,14,.97)!important;border-color:#393326!important;color:#f0ebdf!important}
 .card-body{background:transparent!important}.card-foot{border-color:#302b20!important;color:#bdb49c!important}
@@ -52,7 +52,7 @@ body{
 </style>
 </head>
 <body>
-<header class="top"><button class="menu" aria-label="Menu">☰</button><div class="brand-icon">C</div><div class="brand"><b>Chromium</b> Classroom</div><div class="divider"></div><div class="page-name" id="page-name">Classes</div><div class="right"><a class="chrome" href="chrome.html">Homework</a><div class="avatar">M</div></div></header>
+<header class="top"><button class="menu" aria-label="Menu">☰</button><div class="brand-icon">C</div><div class="brand"><b>Chromium</b> Classroom</div><div class="divider"></div><div class="page-name" id="page-name">Classes</div><div class="right"><button class="add-class" id="add-class-button" type="button">＋ Add classes</button><a class="chrome" href="chrome.html">Homework</a><div class="avatar">M</div></div></header>
 <div class="shell">
 <aside>
 <a class="nav active" href="#classes" data-view="classes"><span class="ico">▦</span>Classes</a>
@@ -79,16 +79,16 @@ body{
 <div class="footer">CHROMIUM CLASSROOM · INDEPENDENT STUDENT DASHBOARD</div>
 </section>
 <section class="detail" id="class-detail"><div class="detail-banner" id="detail-banner"><h2 id="detail-title">Class</h2><p>Class stream</p></div><div class="detail-content"><button class="back" id="back-button">← All classes</button><div class="announcement"><b>Welcome to this class</b><br>This is your class space. You can use it to keep class notes and organize your learning.</div></div></section>
-<section class="detail" id="other-view"><div class="detail-content"><h2 id="other-title">Calendar</h2><p id="other-copy">Your classroom section.</p><button class="back" id="other-back">← Back to classes</button></div></section>
+<section class="detail" id="other-view"><div class="detail-content"><h2 id="other-title">Calendar</h2><p id="other-copy">Your classroom section.</p><button class="back" id="other-back">← Back to classes</button></div></section>\n<section class="detail" id="add-class-view"><div class="detail-content"><h2>Add a class</h2><p>Enter a demo class code to preview this feature.</p><form id="demo-class-form"><label for="demo-code">Demo class code</label><div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px"><input id="demo-code" name="code" required maxlength="24" placeholder="Enter a code" style="background:#17150f;border:1px solid #51452a;border-radius:8px;padding:12px;color:#f1eee5;min-width:180px;flex:1"><button class="add-class" type="submit">Submit code</button></div></form><p id="demo-code-result" role="status" aria-live="polite">Demo only. Codes are not connected to real classes or accounts.</p><button class="back" id="add-class-back">← Back to classes</button></div></section>
 </main>
 </div>
 <script>
 const colors={History:'history','Math acel 1':'math',English:'english','Science acel 1':'science',Art:'art'};
-const cards=document.querySelectorAll('.class-card'),classesView=document.querySelector('#classes-view'),detail=document.querySelector('#class-detail'),other=document.querySelector('#other-view');
+const cards=document.querySelectorAll('.class-card'),classesView=document.querySelector('#classes-view'),detail=document.querySelector('#class-detail'),other=document.querySelector('#other-view'),addClassView=document.querySelector('#add-class-view');
 function openClass(name){classesView.style.display='none';other.classList.remove('show');detail.classList.add('show');document.querySelector('#detail-title').textContent=name;document.querySelector('#detail-banner').className='detail-banner '+colors[name];document.querySelector('#page-name').textContent=name;window.scrollTo({top:0,behavior:'smooth'});}
-function showClasses(){detail.classList.remove('show');other.classList.remove('show');classesView.style.display='block';document.querySelector('#page-name').textContent='Classes';document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view==='classes'));}
+function showClasses(){detail.classList.remove('show');other.classList.remove('show');addClassView.classList.remove('show');classesView.style.display='block';document.querySelector('#page-name').textContent='Classes';document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view==='classes'));}
 cards.forEach(card=>card.addEventListener('click',()=>openClass(card.dataset.class)));
-document.querySelector('#back-button').addEventListener('click',showClasses);document.querySelector('#other-back').addEventListener('click',showClasses);
+document.querySelector('#back-button').addEventListener('click',showClasses);document.querySelector('#other-back').addEventListener('click',showClasses);document.querySelector('#add-class-back').addEventListener('click',showClasses);document.querySelector('#add-class-button').addEventListener('click',()=>{classesView.style.display='none';detail.classList.remove('show');other.classList.remove('show');addClassView.classList.add('show');document.querySelector('#page-name').textContent='Add classes';document.querySelector('#demo-code').focus();});document.querySelector('#demo-class-form').addEventListener('submit',e=>{e.preventDefault();const code=document.querySelector('#demo-code').value.trim();document.querySelector('#demo-code-result').textContent=code?'Demo preview: “'+code+'” was entered. No real class was joined.':'Please enter a demo code.';});
 document.querySelectorAll('.nav').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();const view=link.dataset.view;if(view==='classes'){showClasses();return;}classesView.style.display='none';detail.classList.remove('show');other.classList.add('show');document.querySelector('#page-name').textContent=link.textContent.trim();document.querySelector('#other-title').textContent=link.textContent.trim();document.querySelector('#other-copy').textContent=view==='calendar'?'Your calendar section is ready for upcoming class dates.':'Your to-do section is ready for assignments you want to track.';document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n===link));}));
 </script>
 </body></html>
