@@ -662,3 +662,62 @@ document.querySelector('#settings-button').addEventListener('click', () => setti
 document.querySelector('#close-settings').addEventListener('click', () => settingsDialog.close());
 settingsDialog.addEventListener('click', event => { if (event.target === settingsDialog) settingsDialog.close(); });
 document.querySelectorAll('[data-accent-choice]').forEach(button => button.addEventListener('click', () => applyAccent(button.dataset.accentChoice)));
+
+const feedbackDialog = document.querySelector('#feedback-dialog');
+const feedbackForm = document.querySelector('#feedback-form');
+const brokenGameSelect = document.querySelector('#broken-game');
+const suggestedTitle = document.querySelector('#suggested-title');
+const suggestedUrl = document.querySelector('#suggested-url');
+const feedbackDetails = document.querySelector('#feedback-details');
+let feedbackMode = 'suggest';
+cards.forEach(card => {
+  const game = getGameInfo(card);
+  const option = document.createElement('option');
+  option.value = game.url;
+  option.textContent = game.title;
+  brokenGameSelect.append(option);
+});
+
+function openFeedback(mode) {
+  feedbackMode = mode;
+  const reporting = mode === 'report';
+  document.querySelector('#feedback-dialog-title').innerHTML = reporting ? 'REPORT A <em>GAME</em>' : 'SUGGEST A <em>GAME</em>';
+  document.querySelector('#broken-game-field').hidden = !reporting;
+  document.querySelector('#suggested-title-field').hidden = reporting;
+  document.querySelector('#suggested-url-field').hidden = reporting;
+  suggestedTitle.required = !reporting;
+  feedbackDetails.placeholder = reporting ? 'What happens when you try to open it?' : 'Why should we add this game?';
+  feedbackDetails.value = '';
+  suggestedTitle.value = '';
+  suggestedUrl.value = '';
+  document.querySelector('#feedback-message').textContent = 'This opens a draft issue on GitHub for you to review and submit.';
+  document.querySelector('#feedback-submit').textContent = 'CONTINUE TO GITHUB ↗';
+  feedbackDialog.showModal();
+}
+
+document.querySelector('#suggest-game-button').addEventListener('click', () => openFeedback('suggest'));
+document.querySelector('#report-game-button').addEventListener('click', () => openFeedback('report'));
+document.querySelector('#close-feedback').addEventListener('click', () => feedbackDialog.close());
+feedbackDialog.addEventListener('click', event => { if (event.target === feedbackDialog) feedbackDialog.close(); });
+feedbackForm.addEventListener('submit', event => {
+  event.preventDefault();
+  const reporting = feedbackMode === 'report';
+  const gameTitle = reporting ? brokenGameSelect.options[brokenGameSelect.selectedIndex]?.textContent : suggestedTitle.value.trim();
+  const gameUrl = reporting ? brokenGameSelect.value : suggestedUrl.value.trim();
+  const issueTitle = reporting ? `Broken game report: ${gameTitle}` : `Game suggestion: ${gameTitle}`;
+  const body = [
+    reporting ? 'A player reported a game that may not be working.' : 'A player suggested adding a game to the library.',
+    '',
+    `Game: ${gameTitle}`,
+    gameUrl ? `Link: ${gameUrl}` : '',
+    '',
+    reporting ? 'What happened:' : 'Why add it:',
+    feedbackDetails.value.trim(),
+    '',
+    `Sent from: ${location.origin}${location.pathname}`
+  ].filter(line => line !== undefined).join('\n');
+  const issueUrl = new URL('https://github.com/Matthewsan1500-dotcom/unblocked-website/issues/new');
+  issueUrl.search = new URLSearchParams({ title: issueTitle, body }).toString();
+  window.open(issueUrl.toString(), '_blank', 'noopener,noreferrer');
+  document.querySelector('#feedback-message').textContent = 'GitHub opened with your draft. Sign in there to submit it.';
+});
