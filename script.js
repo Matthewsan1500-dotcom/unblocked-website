@@ -259,7 +259,7 @@ document.querySelector('#web-reload').addEventListener('click', () => {
   if (currentWebUrl) loadWebAddress(currentWebUrl, false);
 });
 webOpenExternal.addEventListener('click', () => {
-  if (currentWebUrl) window.open(currentWebUrl, '_blank', 'noopener,noreferrer');
+  webStatus.textContent = 'THIS WEBSITE MAY BLOCK EMBEDDED VIEWING. CHROME CANNOT OVERRIDE THE SITE\'S SECURITY SETTINGS.';
 });
 
 document.querySelector('#close-modal').addEventListener('click', () => modal.close());
