@@ -174,6 +174,94 @@ document.querySelector('#fullscreen-game').addEventListener('click', async () =>
   } catch { help.textContent = 'Fullscreen is not available for this game in this browser.'; }
 });
 
+
+const webBrowserDialog = document.querySelector('#web-browser-dialog');
+const webBrowserForm = document.querySelector('#web-browser-form');
+const webAddress = document.querySelector('#web-address');
+const webStage = document.querySelector('#web-browser-stage');
+const webStatus = document.querySelector('#web-status');
+const webBack = document.querySelector('#web-back');
+const webForward = document.querySelector('#web-forward');
+const webOpenExternal = document.querySelector('#web-open-external');
+let webHistory = [];
+let webHistoryIndex = -1;
+let currentWebUrl = '';
+
+function normalizeWebAddress(value) {
+  const input = value.trim();
+  if (!input) return '';
+  if (/^https?:\/\//i.test(input)) return input;
+  if (/^(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(input)) return 'http://' + input;
+  if (/^[^\s]+\.[a-z]{2,}([/:?#]|$)/i.test(input)) return 'https://' + input;
+  return 'https://www.google.com/search?q=' + encodeURIComponent(input);
+}
+
+function updateWebHistoryButtons() {
+  webBack.disabled = webHistoryIndex <= 0;
+  webForward.disabled = webHistoryIndex < 0 || webHistoryIndex >= webHistory.length - 1;
+}
+
+function loadWebAddress(value, addHistory = true) {
+  const url = normalizeWebAddress(value);
+  if (!url) return;
+  let parsed;
+  try { parsed = new URL(url); } catch {
+    webStatus.textContent = 'INVALID ADDRESS';
+    return;
+  }
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    webStatus.textContent = 'ONLY HTTP AND HTTPS ADDRESSES ARE SUPPORTED';
+    return;
+  }
+  currentWebUrl = parsed.href;
+  webAddress.value = currentWebUrl;
+  webStatus.textContent = 'LOADING ' + parsed.hostname.toUpperCase();
+  if (addHistory) {
+    webHistory = webHistory.slice(0, webHistoryIndex + 1);
+    webHistory.push(currentWebUrl);
+    webHistoryIndex = webHistory.length - 1;
+  }
+  updateWebHistoryButtons();
+  const frame = document.createElement('iframe');
+  frame.className = 'web-browser-frame';
+  frame.title = 'CHROME web page';
+  frame.src = currentWebUrl;
+  frame.referrerPolicy = 'strict-origin-when-cross-origin';
+  frame.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads allow-presentation');
+  frame.addEventListener('load', () => {
+    webStatus.textContent = 'PAGE LOADED · ' + parsed.hostname.toUpperCase();
+  });
+  webStage.replaceChildren(frame);
+}
+
+document.querySelector('#in-browser-button').addEventListener('click', () => {
+  webBrowserDialog.showModal();
+  webAddress.focus();
+});
+document.querySelector('#close-web-browser').addEventListener('click', () => webBrowserDialog.close());
+webBrowserForm.addEventListener('submit', event => {
+  event.preventDefault();
+  loadWebAddress(webAddress.value);
+});
+webBack.addEventListener('click', () => {
+  if (webHistoryIndex > 0) {
+    webHistoryIndex--;
+    loadWebAddress(webHistory[webHistoryIndex], false);
+  }
+});
+webForward.addEventListener('click', () => {
+  if (webHistoryIndex < webHistory.length - 1) {
+    webHistoryIndex++;
+    loadWebAddress(webHistory[webHistoryIndex], false);
+  }
+});
+document.querySelector('#web-reload').addEventListener('click', () => {
+  if (currentWebUrl) loadWebAddress(currentWebUrl, false);
+});
+webOpenExternal.addEventListener('click', () => {
+  if (currentWebUrl) window.open(currentWebUrl, '_blank', 'noopener,noreferrer');
+});
+
 document.querySelector('#close-modal').addEventListener('click', () => modal.close());
 modal.addEventListener('close', () => stage.replaceChildren());
 
