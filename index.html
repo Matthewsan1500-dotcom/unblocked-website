@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f7f8fc">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#050505">
 <meta name="description" content="Chromium Classroom — an independent student class dashboard."><title>Chromium Classroom</title>
 <style>
 :root{--bg:#f7f8fc;--ink:#202124;--muted:#687078;--line:#e3e6ec;--blue:#356ac3;--white:#fff}
@@ -32,10 +32,27 @@ body{background-color:#050505!important;background-image:radial-gradient(1px 1px
 .back{background:#17150f!important;border-color:#393326!important;color:#e3cd88!important}
 .footer{color:#827b6a!important}
 
+
+/* Visible black background and faint warm-yellow stars */
+html,body{min-height:100%;background:#050505!important}
+body{
+ background-color:#050505!important;
+ background-image:
+ radial-gradient(circle,rgba(232,198,104,.58) 1px,transparent 1.6px),
+ radial-gradient(circle,rgba(232,198,104,.32) 1px,transparent 1.8px),
+ radial-gradient(circle,rgba(232,198,104,.42) 1px,transparent 1.7px)!important;
+ background-size:137px 151px,211px 193px,283px 257px!important;
+ background-position:17px 23px,79px 91px,143px 47px!important;
+ background-attachment:fixed!important;
+ color:#f1eee5!important
+}
+.shell,main,#classes-view{background:transparent!important}
+.top,aside{background:rgba(8,8,8,.96)!important}
+
 </style>
 </head>
 <body>
-<header class="top"><button class="menu" aria-label="Menu">☰</button><div class="brand-icon">C</div><div class="brand"><b>Chromium</b> Classroom</div><div class="divider"></div><div class="page-name" id="page-name">Classes</div><div class="right"><a class="chrome" href="chrome.html">Open CHROME ↗</a><div class="avatar">M</div></div></header>
+<header class="top"><button class="menu" aria-label="Menu">☰</button><div class="brand-icon">C</div><div class="brand"><b>Chromium</b> Classroom</div><div class="divider"></div><div class="page-name" id="page-name">Classes</div><div class="right"><a class="chrome" href="chrome.html">Homework</a><div class="avatar">M</div></div></header>
 <div class="shell">
 <aside>
 <a class="nav active" href="#classes" data-view="classes"><span class="ico">▦</span>Classes</a>
