@@ -312,6 +312,19 @@ function loadWebAddress(value, addHistory = true) {
   renderWebTabs();
 }
 
+function openInChromeBrowser(url) {
+  if (!webTabs.length) createWebTab();
+  webBrowserDialog.showModal();
+  loadWebAddress(url);
+}
+
+document.querySelector('.social-links').addEventListener('click', event => {
+  const link = event.target.closest('a[href]');
+  if (!link) return;
+  event.preventDefault();
+  openInChromeBrowser(link.href);
+});
+
 document.querySelector('#in-browser-button').addEventListener('click', () => {
   if (!webTabs.length) createWebTab();
   webBrowserDialog.showModal();
