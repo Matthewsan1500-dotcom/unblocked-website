@@ -165,6 +165,15 @@ document.querySelector('#reload-game').addEventListener('click', () => {
   if (frame) frame.src = activeGameUrl;
 });
 
+document.querySelector('#fullscreen-game').addEventListener('click', async () => {
+  const frame = stage.querySelector('iframe');
+  if (!frame) return;
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await frame.requestFullscreen();
+  } catch { help.textContent = 'Fullscreen is not available for this game in this browser.'; }
+});
+
 document.querySelector('#close-modal').addEventListener('click', () => modal.close());
 modal.addEventListener('close', () => stage.replaceChildren());
 
