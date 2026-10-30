@@ -92,3 +92,17 @@ html[data-mode="light"]{--bg:#d6d8dd;--panel:#dedfe3;--panel2:#ced0d6}html[data-
 .web-browser-welcome p{padding:0 12px;text-align:center;color:#a99da2;font:8px var(--mono);letter-spacing:.14em}
 .web-browser-note{height:30px;margin:0;padding:8px 12px;color:#8f858b;background:#100e12;font:7px var(--mono);letter-spacing:.04em}
 @media(max-width:600px){.web-browser-controls{gap:4px;padding:8px}.web-browser-controls button{min-width:30px}.web-browser-controls .web-go{padding:0 9px}.web-browser-status{padding:0 8px;font-size:6px}.web-browser-note{font-size:6px}.web-browser-dialog{width:98vw;height:94vh}}
+
+/* Multi-tab browser strip */
+.web-tabs-bar{min-height:39px;display:flex;align-items:stretch;gap:6px;padding:5px 9px 0;border-bottom:1px solid #30272d;background:#0d0b0e}
+.web-tabs{display:flex;align-items:stretch;gap:5px;min-width:0;overflow-x:auto;flex:1;scrollbar-width:thin}
+.web-tab{display:flex;align-items:center;min-width:95px;max-width:190px;border:1px solid #393039;border-bottom:0;background:#171317}
+.web-tab.active{background:#282027;border-color:var(--accent-line)}
+.web-tab-select{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 9px;border:0;background:transparent;color:#cfc5ca;font:8px var(--mono);letter-spacing:.07em;text-align:left;cursor:pointer}
+.web-tab.active .web-tab-select{color:#fff}
+.web-tab-close{width:25px;flex:0 0 25px;border:0;background:transparent;color:#a99da2;font-size:16px;cursor:pointer}
+.web-tab-close:hover{color:#fff;background:#49313b}
+.web-new-tab{width:29px;height:27px;flex:0 0 29px;border:1px solid #51434a;background:#1d181c;color:#eee8e9;font-size:18px;cursor:pointer}
+.web-new-tab:hover{border-color:var(--accent-line);background:#30212a}
+.web-browser-frame[hidden]{display:none}
+@media(max-width:600px){.web-tabs-bar{padding-left:6px;padding-right:6px}.web-tab{min-width:78px;max-width:135px}.web-tab-select{padding:0 6px;font-size:7px}}
