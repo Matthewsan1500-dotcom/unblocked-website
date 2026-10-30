@@ -300,13 +300,22 @@ function loadWebAddress(value, addHistory = true) {
     tab.frame.className = 'web-browser-frame';
     tab.frame.title = 'CHROME web page';
     tab.frame.referrerPolicy = 'strict-origin-when-cross-origin';
-    tab.frame.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-downloads allow-presentation');
+    tab.frame.setAttribute('allow', 'autoplay; fullscreen; clipboard-read; clipboard-write; encrypted-media; picture-in-picture; web-share');
+    tab.frame.setAttribute('allowfullscreen', '');
+    tab.frame.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-downloads allow-presentation allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation');
     tab.frame.addEventListener('load', () => {
-      if (tab.id === activeWebTabId) webStatus.textContent = 'PAGE LOADED · ' + new URL(tab.url).hostname.toUpperCase();
+      clearTimeout(tab.loadTimer);
+      if (tab.id === activeWebTabId) webStatus.textContent = 'RESPONSE RECEIVED · IF BLANK, TRY OPEN OUTSIDE';
     });
     webStage.append(tab.frame);
   }
   tab.frame.hidden = false;
+  clearTimeout(tab.loadTimer);
+  tab.loadTimer = setTimeout(() => {
+    if (tab.id === activeWebTabId && webStatus.textContent.startsWith('LOADING ')) {
+      webStatus.textContent = 'TAKING TOO LONG · THE SITE MAY BLOCK EMBEDDING';
+    }
+  }, 9000);
   tab.frame.src = tab.url;
   webTabs.forEach(item => { if (item.id !== tab.id && item.frame) item.frame.hidden = true; });
   renderWebTabs();
@@ -358,7 +367,18 @@ document.querySelector('#web-reload').addEventListener('click', () => {
   if (tab && tab.url) loadWebAddress(tab.url, false);
 });
 webOpenExternal.addEventListener('click', () => {
-  webStatus.textContent = "THIS WEBSITE MAY BLOCK EMBEDDED VIEWING. CHROME CANNOT OVERRIDE THE SITE'S SECURITY SETTINGS.";
+  const tab = activeWebTab();
+  if (!tab || !tab.url) {
+    webStatus.textContent = 'ENTER A WEBSITE ADDRESS FIRST';
+    return;
+  }
+  const opened = window.open(tab.url, '_blank', 'noopener,noreferrer');
+  if (!opened) webStatus.textContent = 'POP-UP BLOCKED · ALLOW POP-UPS OR COPY THE ADDRESS';
+  else webStatus.textContent = 'OPENED IN A NEW BROWSER TAB';
+});
+webStage.addEventListener('click', event => {
+  const shortcut = event.target.closest('[data-web-url]');
+  if (shortcut) loadWebAddress(shortcut.dataset.webUrl);
 });
 createWebTab();
 
