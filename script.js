@@ -196,9 +196,9 @@ function activeWebTab() {
 function normalizeWebAddress(value) {
   const input = value.trim();
   if (!input) return '';
-  if (/^https?:\\/\\//i.test(input)) return input;
-  if (/^(localhost|127\\.0\\.1)(:\\d+)?(\\/|$)/i.test(input)) return 'http://' + input;
-  if (/^[^\\s]+\\.[a-z]{2,}([/:?#]|$)/i.test(input)) return 'https://' + input;
+  if (/^https?:\/\//i.test(input)) return input;
+  if (/^(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(input)) return 'http://' + input;
+  if (/^[^\s]+\.[a-z]{2,}([/:?#]|$)/i.test(input)) return 'https://' + input;
   return 'https://www.google.com/search?q=' + encodeURIComponent(input);
 }
 
@@ -345,7 +345,7 @@ document.querySelector('#web-reload').addEventListener('click', () => {
   if (tab && tab.url) loadWebAddress(tab.url, false);
 });
 webOpenExternal.addEventListener('click', () => {
-  webStatus.textContent = 'THIS WEBSITE MAY BLOCK EMBEDDED VIEWING. CHROME CANNOT OVERRIDE THE SITE\\'S SECURITY SETTINGS.';
+  webStatus.textContent = "THIS WEBSITE MAY BLOCK EMBEDDED VIEWING. CHROME CANNOT OVERRIDE THE SITE'S SECURITY SETTINGS.";
 });
 createWebTab();
 
