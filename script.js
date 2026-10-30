@@ -22,6 +22,7 @@ const accountButton = document.querySelector('#account-button');
 const accountStatus = document.querySelector('#account-status');
 const settingsDialog = document.querySelector('#settings-dialog');
 const accentStorageKey = 'chrome-accent-color-v1';
+const modeStorageKey = 'chrome-appearance-mode-v1';
 const accentPalettes = {
   red: { main: '#70253a', bright: '#c37484', line: '#a6546c', deep: '#541b29', rgb: '112,37,58' },
   silver: { main: '#747982', bright: '#d2d4da', line: '#aeb2bb', deep: '#444852', rgb: '174,178,187' },
@@ -662,6 +663,25 @@ document.querySelector('#settings-button').addEventListener('click', () => setti
 document.querySelector('#close-settings').addEventListener('click', () => settingsDialog.close());
 settingsDialog.addEventListener('click', event => { if (event.target === settingsDialog) settingsDialog.close(); });
 document.querySelectorAll('[data-accent-choice]').forEach(button => button.addEventListener('click', () => applyAccent(button.dataset.accentChoice)));
+
+function applyAppearance(mode, save = true) {
+  const selected = mode === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.mode = selected;
+  document.querySelector('meta[name="theme-color"]').content = selected === 'light' ? '#eceef2' : '#09080a';
+  document.querySelectorAll('[data-mode-choice]').forEach(button => {
+    const isSelected = button.dataset.modeChoice === selected;
+    button.classList.toggle('selected', isSelected);
+    button.setAttribute('aria-pressed', String(isSelected));
+  });
+  if (save) {
+    try { localStorage.setItem(modeStorageKey, selected); } catch {}
+  }
+}
+
+let savedMode = 'dark';
+try { savedMode = localStorage.getItem(modeStorageKey) || 'dark'; } catch {}
+applyAppearance(savedMode, false);
+document.querySelectorAll('[data-mode-choice]').forEach(button => button.addEventListener('click', () => applyAppearance(button.dataset.modeChoice)));
 
 const feedbackDialog = document.querySelector('#feedback-dialog');
 const feedbackForm = document.querySelector('#feedback-form');
