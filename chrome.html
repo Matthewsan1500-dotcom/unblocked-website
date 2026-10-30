@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Righteous&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261029-game-of-day">
+  <link rel="stylesheet" href="style.css?v=20261029-favorites-v1">
 </head>
 <body>
   <div class="starfield" aria-hidden="true"></div>
@@ -26,7 +26,7 @@
 
     <section class="games-section" id="games">
       <div class="section-head"><div><p class="eyebrow"><span>02</span> THE MIDNIGHT ROTATION</p><h2>CHOOSE YOUR <em>POISON</em></h2></div><label class="search"><span>⌕</span><input id="search" type="search" placeholder="SEARCH GAMES" aria-label="Search games"><kbd>/</kbd></label></div>
-      <div class="filters" role="group" aria-label="Game collection"><button class="filter selected" data-filter="all">ALL <small>43</small></button><button class="filter" data-filter="action">ACTION</button><button class="filter" data-filter="puzzle">PUZZLE</button><button class="filter" data-filter="exploration">EXPLORATION</button><button class="filter" data-filter="magic">MAGIC</button><button class="filter" data-filter="fun">FUN</button><button class="filter" data-filter="driving">DRIVING</button><button class="filter" data-filter="platform">PLATFORM</button><button class="filter" data-filter="multiplayer">MULTIPLAYER</button><span class="results">43 GAMES AVAILABLE</span></div>
+      <div class="filters" role="group" aria-label="Game collection"><button class="filter selected" data-filter="all">ALL <small>43</small></button><button class="filter" data-filter="favorites">FAVORITES <small class="favorite-count">00</small></button><button class="filter" data-filter="action">ACTION</button><button class="filter" data-filter="puzzle">PUZZLE</button><button class="filter" data-filter="exploration">EXPLORATION</button><button class="filter" data-filter="magic">MAGIC</button><button class="filter" data-filter="fun">FUN</button><button class="filter" data-filter="driving">DRIVING</button><button class="filter" data-filter="platform">PLATFORM</button><button class="filter" data-filter="multiplayer">MULTIPLAYER</button><span class="results">43 GAMES AVAILABLE</span></div>
       <div class="grid compact" id="game-grid">
         <article class="game-card game-of-day" data-category="action" data-name="action multiplayer buildnow gg shooter building"><a class="card-art photo-card" href="https://www.crazygames.com/game/buildnow-gg" target="_blank" rel="noopener noreferrer" aria-label="Play BuildNow GG, game of the day"><img class="game-photo" src="https://imgs.crazygames.com/buildnow-gg_16x9/20251229084241/buildnow-gg_16x9-cover?fit=crop&amp;height=630&amp;metadata=none&amp;quality=100&amp;width=1200" alt="BuildNow GG game artwork" loading="lazy"><span class="game-day-badge">GAME OF THE DAY</span><span class="art-label">FEATURED / ACTION · WEB</span><span class="art-arrow">↗</span></a><div class="card-meta"><div><h3>BuildNow GG</h3><p>Build and battle in 1v1 modes on CrazyGames.</p></div><span class="play-icon">↗</span></div></article>
         <article class="game-card" data-category="puzzle" data-name="thief puzzle"><a class="card-art art-thief" href="https://play.famobi.com/thief-puzzle" target="_blank" rel="noopener noreferrer" aria-label="Play Thief Puzzle"><span class="art-label">01 / PUZZLE · WEB</span><div class="thief-silhouette">♟</div><img class="game-logo" src="https://ik.imagekit.io/sjyfpsp1n/marketing/featuredGames/thief-puzzle/logo.png" alt="Thief Puzzle logo" loading="lazy"><span class="art-arrow">↗</span></a><div class="card-meta"><div><h3>Thief Puzzle</h3><p>Steal the prize without getting caught.</p></div><span class="play-icon">↗</span></div></article>
@@ -79,6 +79,6 @@
   <footer><a class="brand" href="#top"><span class="brand-mark chrome-mark">C</span><span>CHROME</span></a><a href="#top">BACK TO TOP ↑</a></footer>
 
   <dialog id="game-modal" aria-label="In-page game viewer"><div class="browser-toolbar"><button id="close-modal" class="browser-back" aria-label="Back to games">← <span>GAMES</span></button><div class="browser-address"><span class="browser-lock">S</span><span id="browser-url">STUDY HALL / GAMES</span></div><button id="reload-game" class="browser-reload" aria-label="Reload game">↻</button></div><div class="browser-title"><span class="browser-dot"></span><span id="modal-title">GAME</span><span class="browser-caption">IN-PAGE VIEW</span></div><div id="game-stage"></div><p class="modal-help" id="modal-help"></p></dialog>
-  <script src="script.js"></script>
+  <script src="script.js?v=20261029-favorites-v1"></script>
 </body>
 </html>
