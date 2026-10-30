@@ -23,6 +23,17 @@ const accountStatus = document.querySelector('#account-status');
 const settingsDialog = document.querySelector('#settings-dialog');
 const accentStorageKey = 'chrome-accent-color-v1';
 const modeStorageKey = 'chrome-appearance-mode-v1';
+const redeemedCodesStorageKey = 'chrome-redeemed-codes-v1';
+const unlockedCosmeticsStorageKey = 'chrome-unlocked-cosmetics-v1';
+const celebratedAchievementsStorageKey = 'chrome-celebrated-achievements-v1';
+let unlockedCosmetics = new Set();
+let redeemedCodes = new Set();
+let celebratedAchievements = new Set();
+try {
+  unlockedCosmetics = new Set(JSON.parse(localStorage.getItem(unlockedCosmeticsStorageKey) || '[]'));
+  redeemedCodes = new Set(JSON.parse(localStorage.getItem(redeemedCodesStorageKey) || '[]'));
+  celebratedAchievements = new Set(JSON.parse(localStorage.getItem(celebratedAchievementsStorageKey) || '[]'));
+} catch {}
 const accentPalettes = {
   red: { main: '#70253a', bright: '#c37484', line: '#a6546c', deep: '#541b29', rgb: '112,37,58' },
   silver: { main: '#747982', bright: '#d2d4da', line: '#aeb2bb', deep: '#444852', rgb: '174,178,187' },
@@ -30,8 +41,30 @@ const accentPalettes = {
   purple: { main: '#583677', bright: '#c09ae9', line: '#9a70c9', deep: '#38224e', rgb: '154,112,201' },
   green: { main: '#245d48', bright: '#82d2aa', line: '#54a982', deep: '#173c2e', rgb: '84,169,130' },
   orange: { main: '#74411e', bright: '#e5ad71', line: '#d58a45', deep: '#4e2b16', rgb: '213,138,69' },
-  pink: { main: '#762e51', bright: '#ed91bb', line: '#d9699b', deep: '#4e1e36', rgb: '217,105,155' }
+  pink: { main: '#762e51', bright: '#ed91bb', line: '#d9699b', deep: '#4e1e36', rgb: '217,105,155' },
+  nebula: { main: '#343f82', bright: '#a9b7ff', line: '#7b8cff', deep: '#202754', rgb: '123,140,255' },
+  gold: { main: '#70551c', bright: '#f0d47e', line: '#d4ad45', deep: '#4e3b14', rgb: '212,173,69' },
+  glitch: { main: '#146b69', bright: '#84f3e7', line: '#44d7c8', deep: '#104745', rgb: '68,215,200' },
+  frost: { main: '#2e607b', bright: '#a6e8ff', line: '#72cbea', deep: '#1c3f54', rgb: '114,203,234' },
+  sunset: { main: '#78433c', bright: '#ffb28f', line: '#f18b68', deep: '#512c2a', rgb: '241,139,104' },
+  eclipse: { main: '#45324f', bright: '#c49cdb', line: '#a77ac4', deep: '#30213a', rgb: '167,122,196' },
+  midnight: { main: '#30345e', bright: '#aab5ff', line: '#7787ec', deep: '#202344', rgb: '119,135,236' },
+  supernova: { main: '#713253', bright: '#ff9fe1', line: '#ea70c4', deep: '#4d203b', rgb: '234,112,196' },
+  comet: { main: '#315a53', bright: '#a2e8cb', line: '#64cba2', deep: '#203f3a', rgb: '100,203,162' }
 };
+const codeRewards = {
+  STARFALL: { avatar: '🌠', avatarKey: 'avatar-nebula', accent: 'nebula', accentKey: 'accent-nebula', name: 'Nebula Phantom' },
+  GOLDRUSH: { avatar: '👑', avatarKey: 'avatar-gold', accent: 'gold', accentKey: 'accent-gold', name: 'Chrome Crown' },
+  VOIDMODE: { avatar: '🌀', avatarKey: 'avatar-glitch', accent: 'glitch', accentKey: 'accent-glitch', name: 'Glitch Spirit' },
+  FROSTBYTE: { avatar: '🧊', avatarKey: 'avatar-frost', accent: 'frost', accentKey: 'accent-frost', name: 'Frostbyte' },
+  SUNSETX: { avatar: '🌅', avatarKey: 'avatar-sunset', accent: 'sunset', accentKey: 'accent-sunset', name: 'Sunset Runner' },
+  DARKMATTER: { avatar: '🌑', avatarKey: 'avatar-eclipse', accent: 'eclipse', accentKey: 'accent-eclipse', name: 'Dark Matter' }
+};
+const secretAchievements = [
+  { id: 'night-owl', title: 'NIGHT OWL', detail: 'Play 5 games between 10 PM and 4 AM', reached: () => Number(playerProgress.nightOpens) >= 5, avatar: '🦉', avatarKey: 'avatar-owl', accent: 'midnight', accentKey: 'accent-midnight', reward: 'Night Owl' },
+  { id: 'reel-royalty', title: 'REEL ROYALTY', detail: 'Spin Surprise Me 10 times', reached: () => Number(playerProgress.spins) >= 10, avatar: '🎲', avatarKey: 'avatar-dice', accent: 'supernova', accentKey: 'accent-supernova', reward: 'Lucky Dice' },
+  { id: 'full-rotation', title: 'FULL ROTATION', detail: 'Play 20 different games', reached: () => playerProgress.allUnique.length >= 20, avatar: '🪐', avatarKey: 'avatar-comet', accent: 'comet', accentKey: 'accent-comet', reward: 'Comet Rider' }
+];
 let activeAccent = 'red';
 let accountMode = 'signin';
 let signedInUser = null;
@@ -190,7 +223,7 @@ function weekStamp() {
 }
 
 function emptyProgress() {
-  return { week: weekStamp(), weeklyOpens: 0, weeklyUnique: [], weeklyFavorites: 0, allUnique: [], spins: 0, multiplayerUnique: [] };
+  return { week: weekStamp(), weeklyOpens: 0, weeklyUnique: [], weeklyFavorites: 0, allUnique: [], spins: 0, nightOpens: 0, multiplayerUnique: [] };
 }
 
 try {
@@ -198,10 +231,11 @@ try {
 } catch {
   playerProgress = emptyProgress();
 }
-if (playerProgress.week !== weekStamp()) playerProgress = { ...emptyProgress(), allUnique: playerProgress.allUnique || [], spins: playerProgress.spins || 0, multiplayerUnique: playerProgress.multiplayerUnique || [] };
+if (playerProgress.week !== weekStamp()) playerProgress = { ...emptyProgress(), allUnique: playerProgress.allUnique || [], spins: playerProgress.spins || 0, nightOpens: playerProgress.nightOpens || 0, multiplayerUnique: playerProgress.multiplayerUnique || [] };
 playerProgress.weeklyUnique = Array.isArray(playerProgress.weeklyUnique) ? playerProgress.weeklyUnique : [];
 playerProgress.allUnique = Array.isArray(playerProgress.allUnique) ? playerProgress.allUnique : [];
 playerProgress.multiplayerUnique = Array.isArray(playerProgress.multiplayerUnique) ? playerProgress.multiplayerUnique : [];
+playerProgress.nightOpens = Number(playerProgress.nightOpens) || 0;
 
 function persistProgress() {
   try { localStorage.setItem(progressStorageKey, JSON.stringify(playerProgress)); } catch {}
@@ -248,36 +282,47 @@ function renderChallenges() {
 }
 
 function renderAchievements() {
-  const unlocked = [
-    playerProgress.allUnique.length >= 1,
-    playerProgress.allUnique.length >= 10,
-    favorites.size >= 5,
-    (Number(playerProgress.spins) || 0) >= 5,
-    playerProgress.multiplayerUnique.length >= 3
+  const regular = [
+    { id: 'first-drop', title: 'FIRST DROP', detail: 'Open your first game', unlocked: playerProgress.allUnique.length >= 1 },
+    { id: 'night-explorer', title: 'NIGHT EXPLORER', detail: 'Play 10 different games', unlocked: playerProgress.allUnique.length >= 10 },
+    { id: 'curator', title: 'CURATOR', detail: 'Save 5 games as favorites', unlocked: favorites.size >= 5 },
+    { id: 'lucky-spin', title: 'LUCKY SPIN', detail: 'Spin the surprise reel 5 times', unlocked: (Number(playerProgress.spins) || 0) >= 5 },
+    { id: 'squad-up', title: 'SQUAD UP', detail: 'Try 3 multiplayer games', unlocked: playerProgress.multiplayerUnique.length >= 3 }
   ];
-  const achievements = [
-    ['FIRST DROP', 'Open your first game'],
-    ['NIGHT EXPLORER', 'Play 10 different games'],
-    ['CURATOR', 'Save 5 games as favorites'],
-    ['LUCKY SPIN', 'Spin the surprise reel 5 times'],
-    ['SQUAD UP', 'Try 3 multiplayer games']
-  ];
-  document.querySelector('#achievement-count').textContent = `${unlocked.filter(Boolean).length} / ${unlocked.length} UNLOCKED`;
-  achievementsGrid.replaceChildren(...achievements.map(([name, description], index) => {
+  const secrets = secretAchievements.map(secret => {
+    const unlocked = secret.reached();
+    if (unlocked && grantCosmeticReward(secret, `secret-${secret.id}`)) animateUnlockedReward(secret);
+    return {
+      id: secret.id,
+      title: unlocked ? secret.title : '???',
+      detail: unlocked ? `${secret.detail} · Reward: ${secret.reward}` : 'Complete a secret challenge to reveal this reward',
+      unlocked,
+      secret: true
+    };
+  });
+  const achievements = [...regular, ...secrets];
+  document.querySelector('#achievement-count').textContent = `${achievements.filter(item => item.unlocked).length} / ${achievements.length} UNLOCKED`;
+  achievementsGrid.replaceChildren(...achievements.map(achievement => {
     const item = document.createElement('article');
-    item.className = `achievement-card${unlocked[index] ? ' unlocked' : ''}`;
+    item.className = `achievement-card${achievement.unlocked ? ' unlocked' : ''}${achievement.secret ? ' secret-achievement' : ''}`;
+    item.dataset.achievementId = achievement.id;
+    if (achievement.unlocked && !celebratedAchievements.has(achievement.id)) {
+      item.classList.add('newly-unlocked');
+      celebratedAchievements.add(achievement.id);
+    }
     const icon = document.createElement('span');
     icon.className = 'achievement-icon';
-    icon.textContent = unlocked[index] ? '✦' : '◇';
+    icon.textContent = achievement.unlocked ? '✦' : achievement.secret ? '？' : '◇';
     const titleNode = document.createElement('b');
-    titleNode.textContent = name;
+    titleNode.textContent = achievement.title;
     const detail = document.createElement('span');
-    detail.textContent = description;
+    detail.textContent = achievement.detail;
     const state = document.createElement('small');
-    state.textContent = unlocked[index] ? 'UNLOCKED' : 'LOCKED';
+    state.textContent = achievement.unlocked ? 'UNLOCKED' : achievement.secret ? 'HIDDEN' : 'LOCKED';
     item.append(icon, titleNode, detail, state);
     return item;
   }));
+  try { localStorage.setItem(celebratedAchievementsStorageKey, JSON.stringify([...celebratedAchievements])); } catch {}
 }
 
 function renderMultiplayer() {
@@ -308,6 +353,8 @@ function renderMultiplayer() {
 
 function recordGameOpen(game) {
   playerProgress.weeklyOpens = (Number(playerProgress.weeklyOpens) || 0) + 1;
+  const localHour = new Date().getHours();
+  if (localHour >= 22 || localHour < 4) playerProgress.nightOpens = (Number(playerProgress.nightOpens) || 0) + 1;
   if (!playerProgress.weeklyUnique.includes(game.url)) playerProgress.weeklyUnique.push(game.url);
   if (!playerProgress.allUnique.includes(game.url)) playerProgress.allUnique.push(game.url);
   if (multiplayerUrls.has(game.url) && !playerProgress.multiplayerUnique.includes(game.url)) playerProgress.multiplayerUnique.push(game.url);
@@ -538,10 +585,11 @@ function saveCloudDataToDevice(row) {
   if (row?.favorites && Array.isArray(row.favorites)) favorites = new Set(row.favorites);
   if (row?.recent_games && Array.isArray(row.recent_games)) recentGames = row.recent_games.slice(0, 8);
   if (!playerProgress || typeof playerProgress !== 'object') playerProgress = emptyProgress();
-  if (playerProgress.week !== weekStamp()) playerProgress = { ...emptyProgress(), allUnique: playerProgress.allUnique || [], spins: playerProgress.spins || 0, multiplayerUnique: playerProgress.multiplayerUnique || [] };
+  if (playerProgress.week !== weekStamp()) playerProgress = { ...emptyProgress(), allUnique: playerProgress.allUnique || [], spins: playerProgress.spins || 0, nightOpens: playerProgress.nightOpens || 0, multiplayerUnique: playerProgress.multiplayerUnique || [] };
   playerProgress.weeklyUnique = Array.isArray(playerProgress.weeklyUnique) ? playerProgress.weeklyUnique : [];
   playerProgress.allUnique = Array.isArray(playerProgress.allUnique) ? playerProgress.allUnique : [];
   playerProgress.multiplayerUnique = Array.isArray(playerProgress.multiplayerUnique) ? playerProgress.multiplayerUnique : [];
+  playerProgress.nightOpens = Number(playerProgress.nightOpens) || 0;
   try {
     localStorage.setItem(profileStorageKey, JSON.stringify(playerProfile));
     localStorage.setItem(progressStorageKey, JSON.stringify(playerProgress));
@@ -635,7 +683,40 @@ if (supabaseClient) {
   });
 } else updateAccountUI();
 
+function renderExclusiveRewards() {
+  document.querySelectorAll('[data-reward-key]').forEach(button => {
+    button.hidden = !unlockedCosmetics.has(button.dataset.rewardKey);
+  });
+  const hasAvatarReward = [...document.querySelectorAll('#avatar-picker [data-reward-key]')].some(button => !button.hidden);
+  document.querySelector('#exclusive-avatar-label').hidden = !hasAvatarReward;
+}
+
+function grantCosmeticReward(reward, sourceKey) {
+  if (unlockedCosmetics.has(sourceKey)) return false;
+  unlockedCosmetics.add(sourceKey);
+  if (reward.avatarKey) unlockedCosmetics.add(reward.avatarKey);
+  if (reward.accentKey) unlockedCosmetics.add(reward.accentKey);
+  try { localStorage.setItem(unlockedCosmeticsStorageKey, JSON.stringify([...unlockedCosmetics])); } catch {}
+  renderExclusiveRewards();
+  return true;
+}
+
+function animateUnlockedReward(reward) {
+  const targets = [
+    document.querySelector(`#avatar-picker [data-reward-key="${reward.avatarKey}"]`),
+    document.querySelector(`.theme-options [data-reward-key="${reward.accentKey}"]`),
+    document.querySelector('#profile-avatar')
+  ].filter(Boolean);
+  targets.forEach(target => {
+    target.classList.remove('reward-pop');
+    void target.offsetWidth;
+    target.classList.add('reward-pop');
+    window.setTimeout(() => target.classList.remove('reward-pop'), 1100);
+  });
+}
+
 function applyAccent(name, save = true) {
+  if (!['red', 'silver', 'blue', 'purple', 'green', 'orange', 'pink'].includes(name) && !unlockedCosmetics.has(`accent-${name}`)) return;
   const selected = accentPalettes[name] ? name : 'red';
   const colors = accentPalettes[selected];
   activeAccent = selected;
@@ -659,10 +740,47 @@ function applyAccent(name, save = true) {
 let savedAccent = 'red';
 try { savedAccent = localStorage.getItem(accentStorageKey) || 'red'; } catch {}
 applyAccent(savedAccent, false);
+renderExclusiveRewards();
 document.querySelector('#settings-button').addEventListener('click', () => settingsDialog.showModal());
 document.querySelector('#close-settings').addEventListener('click', () => settingsDialog.close());
 settingsDialog.addEventListener('click', event => { if (event.target === settingsDialog) settingsDialog.close(); });
 document.querySelectorAll('[data-accent-choice]').forEach(button => button.addEventListener('click', () => applyAccent(button.dataset.accentChoice)));
+
+const secretCodeInput = document.querySelector('#secret-code');
+const codeMessage = document.querySelector('#code-message');
+function redeemSecretCode() {
+  const code = secretCodeInput.value.trim().toUpperCase().replace(/\s+/g, '');
+  if (!code) {
+    codeMessage.textContent = 'Enter a code first';
+    return;
+  }
+  const reward = codeRewards[code];
+  if (!reward) {
+    codeMessage.textContent = 'That code did not work. Try another one';
+    return;
+  }
+  if (redeemedCodes.has(code)) {
+    codeMessage.textContent = 'That code was already redeemed on this device';
+    return;
+  }
+  redeemedCodes.add(code);
+  grantCosmeticReward(reward, `code-${code}`);
+  animateUnlockedReward(reward);
+  try { localStorage.setItem(redeemedCodesStorageKey, JSON.stringify([...redeemedCodes])); } catch {}
+  playerProfile = { ...playerProfile, avatar: reward.avatar };
+  try { localStorage.setItem(profileStorageKey, JSON.stringify(playerProfile)); } catch {}
+  applyAccent(reward.accent);
+  renderProfile();
+  queueCloudSave();
+  codeMessage.textContent = `${reward.name} unlocked · new profile icon and ${reward.accent.toUpperCase()} color added`;
+  codeMessage.classList.remove('reward-message-pop');
+  void codeMessage.offsetWidth;
+  codeMessage.classList.add('reward-message-pop');
+  secretCodeInput.value = '';
+  document.querySelectorAll('#avatar-picker [data-avatar]').forEach(button => button.classList.toggle('selected', button.dataset.avatar === playerProfile.avatar));
+}
+document.querySelector('#redeem-code').addEventListener('click', redeemSecretCode);
+secretCodeInput.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); redeemSecretCode(); } });
 
 function applyAppearance(mode, save = true) {
   const selected = mode === 'light' ? 'light' : 'dark';
