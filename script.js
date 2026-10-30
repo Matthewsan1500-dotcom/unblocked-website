@@ -183,22 +183,92 @@ const webStatus = document.querySelector('#web-status');
 const webBack = document.querySelector('#web-back');
 const webForward = document.querySelector('#web-forward');
 const webOpenExternal = document.querySelector('#web-open-external');
-let webHistory = [];
-let webHistoryIndex = -1;
-let currentWebUrl = '';
+const webTabsBar = document.querySelector('#web-tabs');
+const webNewTab = document.querySelector('#web-new-tab');
+let webTabs = [];
+let activeWebTabId = 0;
+let nextWebTabId = 1;
+
+function activeWebTab() {
+  return webTabs.find(tab => tab.id === activeWebTabId) || null;
+}
 
 function normalizeWebAddress(value) {
   const input = value.trim();
   if (!input) return '';
-  if (/^https?:\/\//i.test(input)) return input;
-  if (/^(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(input)) return 'http://' + input;
-  if (/^[^\s]+\.[a-z]{2,}([/:?#]|$)/i.test(input)) return 'https://' + input;
+  if (/^https?:\\/\\//i.test(input)) return input;
+  if (/^(localhost|127\\.0\\.1)(:\\d+)?(\\/|$)/i.test(input)) return 'http://' + input;
+  if (/^[^\\s]+\\.[a-z]{2,}([/:?#]|$)/i.test(input)) return 'https://' + input;
   return 'https://www.google.com/search?q=' + encodeURIComponent(input);
 }
 
 function updateWebHistoryButtons() {
-  webBack.disabled = webHistoryIndex <= 0;
-  webForward.disabled = webHistoryIndex < 0 || webHistoryIndex >= webHistory.length - 1;
+  const tab = activeWebTab();
+  webBack.disabled = !tab || tab.historyIndex <= 0;
+  webForward.disabled = !tab || tab.historyIndex < 0 || tab.historyIndex >= tab.history.length - 1;
+}
+
+function renderWebTabs() {
+  webTabsBar.replaceChildren();
+  webTabs.forEach(tab => {
+    const wrap = document.createElement('div');
+    wrap.className = 'web-tab' + (tab.id === activeWebTabId ? ' active' : '');
+    const select = document.createElement('button');
+    select.type = 'button';
+    select.className = 'web-tab-select';
+    select.setAttribute('role', 'tab');
+    select.setAttribute('aria-selected', tab.id === activeWebTabId ? 'true' : 'false');
+    select.textContent = tab.title || 'NEW TAB';
+    select.addEventListener('click', () => switchWebTab(tab.id));
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'web-tab-close';
+    close.setAttribute('aria-label', 'Close ' + (tab.title || 'tab'));
+    close.textContent = '×';
+    close.addEventListener('click', () => closeWebTab(tab.id));
+    wrap.append(select, close);
+    webTabsBar.append(wrap);
+  });
+}
+
+function switchWebTab(id) {
+  activeWebTabId = id;
+  const tab = activeWebTab();
+  if (!tab) return;
+  webTabs.forEach(item => {
+    if (item.frame) item.frame.hidden = item.id !== id;
+  });
+  webAddress.value = tab.url || '';
+  webStatus.textContent = tab.url ? 'READY · ' + new URL(tab.url).hostname.toUpperCase() : 'NEW TAB · READY TO BROWSE';
+  updateWebHistoryButtons();
+  renderWebTabs();
+}
+
+function createWebTab(url = '') {
+  const tab = { id: nextWebTabId++, title: 'NEW TAB', url: '', history: [], historyIndex: -1, frame: null };
+  webTabs.push(tab);
+  activeWebTabId = tab.id;
+  renderWebTabs();
+  switchWebTab(tab.id);
+  if (url) loadWebAddress(url);
+  return tab;
+}
+
+function closeWebTab(id) {
+  const index = webTabs.findIndex(tab => tab.id === id);
+  if (index < 0) return;
+  const [tab] = webTabs.splice(index, 1);
+  if (tab.frame) tab.frame.remove();
+  if (!webTabs.length) {
+    createWebTab();
+    return;
+  }
+  if (activeWebTabId === id) {
+    const next = webTabs[Math.min(index, webTabs.length - 1)];
+    switchWebTab(next.id);
+  } else {
+    renderWebTabs();
+  }
 }
 
 function loadWebAddress(value, addHistory = true) {
@@ -213,54 +283,71 @@ function loadWebAddress(value, addHistory = true) {
     webStatus.textContent = 'ONLY HTTP AND HTTPS ADDRESSES ARE SUPPORTED';
     return;
   }
-  currentWebUrl = parsed.href;
-  webAddress.value = currentWebUrl;
+  let tab = activeWebTab();
+  if (!tab) tab = createWebTab();
+  tab.url = parsed.href;
+  tab.title = parsed.hostname.replace(/^www\\./, '').toUpperCase();
+  webAddress.value = tab.url;
   webStatus.textContent = 'LOADING ' + parsed.hostname.toUpperCase();
   if (addHistory) {
-    webHistory = webHistory.slice(0, webHistoryIndex + 1);
-    webHistory.push(currentWebUrl);
-    webHistoryIndex = webHistory.length - 1;
+    tab.history = tab.history.slice(0, tab.historyIndex + 1);
+    tab.history.push(tab.url);
+    tab.historyIndex = tab.history.length - 1;
   }
   updateWebHistoryButtons();
-  const frame = document.createElement('iframe');
-  frame.className = 'web-browser-frame';
-  frame.title = 'CHROME web page';
-  frame.src = currentWebUrl;
-  frame.referrerPolicy = 'strict-origin-when-cross-origin';
-  frame.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads allow-presentation');
-  frame.addEventListener('load', () => {
-    webStatus.textContent = 'PAGE LOADED · ' + parsed.hostname.toUpperCase();
-  });
-  webStage.replaceChildren(frame);
+  if (!tab.frame) {
+    tab.frame = document.createElement('iframe');
+    tab.frame.className = 'web-browser-frame';
+    tab.frame.title = 'CHROME web page';
+    tab.frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    tab.frame.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-downloads allow-presentation');
+    tab.frame.addEventListener('load', () => {
+      if (tab.id === activeWebTabId) webStatus.textContent = 'PAGE LOADED · ' + new URL(tab.url).hostname.toUpperCase();
+    });
+    webStage.append(tab.frame);
+  }
+  tab.frame.hidden = false;
+  tab.frame.src = tab.url;
+  webTabs.forEach(item => { if (item.id !== tab.id && item.frame) item.frame.hidden = true; });
+  renderWebTabs();
 }
 
 document.querySelector('#in-browser-button').addEventListener('click', () => {
+  if (!webTabs.length) createWebTab();
   webBrowserDialog.showModal();
   webAddress.focus();
 });
 document.querySelector('#close-web-browser').addEventListener('click', () => webBrowserDialog.close());
+webNewTab.addEventListener('click', () => {
+  createWebTab();
+  webAddress.focus();
+});
 webBrowserForm.addEventListener('submit', event => {
   event.preventDefault();
   loadWebAddress(webAddress.value);
 });
 webBack.addEventListener('click', () => {
-  if (webHistoryIndex > 0) {
-    webHistoryIndex--;
-    loadWebAddress(webHistory[webHistoryIndex], false);
+  const tab = activeWebTab();
+  if (tab && tab.historyIndex > 0) {
+    tab.historyIndex--;
+    loadWebAddress(tab.history[tab.historyIndex], false);
   }
 });
 webForward.addEventListener('click', () => {
-  if (webHistoryIndex < webHistory.length - 1) {
-    webHistoryIndex++;
-    loadWebAddress(webHistory[webHistoryIndex], false);
+  const tab = activeWebTab();
+  if (tab && tab.historyIndex < tab.history.length - 1) {
+    tab.historyIndex++;
+    loadWebAddress(tab.history[tab.historyIndex], false);
   }
 });
 document.querySelector('#web-reload').addEventListener('click', () => {
-  if (currentWebUrl) loadWebAddress(currentWebUrl, false);
+  const tab = activeWebTab();
+  if (tab && tab.url) loadWebAddress(tab.url, false);
 });
 webOpenExternal.addEventListener('click', () => {
-  webStatus.textContent = 'THIS WEBSITE MAY BLOCK EMBEDDED VIEWING. CHROME CANNOT OVERRIDE THE SITE\'S SECURITY SETTINGS.';
+  webStatus.textContent = 'THIS WEBSITE MAY BLOCK EMBEDDED VIEWING. CHROME CANNOT OVERRIDE THE SITE\\'S SECURITY SETTINGS.';
 });
+createWebTab();
 
 document.querySelector('#close-modal').addEventListener('click', () => modal.close());
 modal.addEventListener('close', () => stage.replaceChildren());
